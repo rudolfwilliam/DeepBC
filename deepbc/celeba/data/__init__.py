@@ -1,0 +1,1 @@
+"""Contains the data itself and the files, folders and scripts to train and store the classifiers as to obtain continuous attributes."""

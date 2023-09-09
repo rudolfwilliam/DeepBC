@@ -1,0 +1,115 @@
+absl-py==1.4.0
+aiohttp==3.8.4
+aiosignal==1.3.1
+alibi==0.9.2
+astunparse==1.6.3
+async-timeout==4.0.2
+attrs==23.1.0
+blis==0.7.9
+cachetools==5.3.1
+catalogue==2.0.8
+certifi==2023.5.7
+cffi @ file:///Users/ec2-user/ci_py311/cffi_1678315312775/work
+charset-normalizer==3.1.0
+click==8.1.3
+confection==0.0.4
+contourpy==1.0.7
+cycler==0.11.0
+cymem==2.0.7
+dill==0.3.6
+filelock @ file:///Users/ec2-user/ci_py311/filelock_1678318171955/work
+flatbuffers==23.5.26
+fonttools==4.39.4
+frozenlist==1.3.3
+fsspec==2023.6.0
+gast==0.4.0
+gmpy2 @ file:///Users/ec2-user/ci_py311/gmpy2_1678380831980/work
+google-auth==2.20.0
+google-auth-oauthlib==1.0.0
+google-pasta==0.2.0
+grpcio==1.54.2
+h5py==3.8.0
+huggingface-hub==0.15.1
+idna==3.4
+imageio==2.31.0
+jax==0.4.12
+Jinja2 @ file:///Users/ec2-user/ci_py311/jinja2_1678317138271/work
+joblib==1.2.0
+keras==2.12.0
+kiwisolver==1.4.4
+langcodes==3.3.0
+lazy_loader==0.2
+libclang==16.0.0
+lightning-utilities==0.9.0
+Markdown==3.4.3
+MarkupSafe @ file:///Users/ec2-user/ci_py311/markupsafe_1678316973889/work
+matplotlib==3.7.1
+mkl-fft==1.3.6
+mkl-random @ file:///Users/ec2-user/mkl/mkl_random_1682994911338/work
+mkl-service==2.4.0
+ml-dtypes==0.2.0
+mpmath==1.2.1
+multidict==6.0.4
+murmurhash==1.0.9
+networkx==3.1
+normflows==1.7.1
+numpy==1.23.5
+oauthlib==3.2.2
+opt-einsum @ file:///tmp/build/80754af9/opt_einsum_1621500238896/work
+packaging==23.1
+pandas==2.0.2
+pathy==0.10.1
+Pillow==9.5.0
+preshed==3.0.8
+protobuf==4.23.2
+pyasn1==0.5.0
+pyasn1-modules==0.3.0
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+pydantic==1.10.9
+pyparsing==3.0.9
+pyro-api @ file:///home/conda/feedstock_root/build_artifacts/pyro-api_1614940619870/work
+pyro-ppl @ file:///home/conda/feedstock_root/build_artifacts/pyro-ppl_1672805519389/work
+python-dateutil==2.8.2
+pytorch-lightning==2.0.4
+pytz==2023.3
+PyWavelets==1.4.1
+PyYAML==6.0
+regex==2023.6.3
+requests==2.31.0
+requests-oauthlib==1.3.1
+rsa==4.9
+safetensors==0.3.1
+scikit-image==0.20.0
+scikit-learn==1.2.2
+scipy==1.10.1
+six==1.16.0
+smart-open==6.3.0
+spacy==3.5.3
+spacy-legacy==3.0.12
+spacy-loggers==1.0.4
+spacy-lookups-data==1.0.3
+srsly==2.4.6
+sympy @ file:///Users/ec2-user/ci_py311_2/sympy_1679338337660/work
+tensorboard==2.12.3
+tensorboard-data-server==0.7.1
+tensorflow==2.12.0
+tensorflow-estimator==2.12.0
+tensorflow-io-gcs-filesystem==0.32.0
+termcolor==2.3.0
+thinc==8.1.10
+threadpoolctl==3.1.0
+tifffile==2023.4.12
+tokenizers==0.13.3
+torch @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_82vavna4yl/croot/pytorch_1686931843901/work
+torchmetrics==1.0.0
+torchvision==0.15.2
+tqdm @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_03acd6t6ca/croot/tqdm_1679561866522/work
+transformers==4.30.2
+typer==0.7.0
+typing_extensions @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_9cw7_jdp5v/croot/typing_extensions_1686601820966/work
+tzdata==2023.3
+urllib3==1.26.16
+wasabi==1.1.2
+Werkzeug==2.3.6
+wrapt==1.14.1
+yarl==1.9.2

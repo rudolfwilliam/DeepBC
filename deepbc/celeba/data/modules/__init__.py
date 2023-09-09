@@ -1,0 +1,1 @@
+from celeba.data.modules.classifier import Classifier 
