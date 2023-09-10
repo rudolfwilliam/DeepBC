@@ -1,13 +1,13 @@
 {
-    "n_layers" : 10,
-    "ckpt_path" : "./celeba/scm/trained_models/checkpoints/",
+    "n_layers" : 3,
+    "ckpt_path" : "./celeba/scm/trained_models/checkpoints/fix_flows/",
     "batch_size_train" : 64,
     "batch_size_val" : 256,
     "lr" : 1e-1,
     "patience" : 5,
     "max_epochs" : 50,
     "train_val_split" : 0.8,
-    "bald_linear" : true,
+    "bald_linear" : false,
     "beard_linear" : false,
     "age_linear" : true,
     "gender_linear" : true 

@@ -29,7 +29,7 @@ class GCondFlow(pl.LightningModule, StructuralEquation):
     def validation_step(self, val_batch, batch_idx):
         x, x_pa = val_batch 
         loss = self.flow.forward_kld(x, x_pa)
-        self.log("val_loss", loss)
+        self.log("val_loss", loss, on_step=False, on_epoch=True)
         return loss 
     
     def configure_optimizers(self):

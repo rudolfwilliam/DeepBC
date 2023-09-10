@@ -7,8 +7,8 @@ import normflows as nf
 from normflows.flows.affine.coupling import AffineConstFlow
 
 class AttributeFlow(GCondFlow):
-    def __init__(self, name, parents, n_layers=10, linear_=True):
-        super(AttributeFlow, self).__init__(name)
+    def __init__(self, name, parents, n_layers=10, linear_=True, lr=1e-3):
+        super(AttributeFlow, self).__init__(name, lr)
         self.parents = parents
         base = nf.distributions.base.DiagGaussian(1)
         layers = []

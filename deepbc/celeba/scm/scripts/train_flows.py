@@ -10,7 +10,7 @@ def main(cont_attr_path="./celeba/data/predictions/preds.pt", default_root_dir="
     torch.manual_seed(42)
     config = get_config(config_dir=config_dir, default="flow")
     # initialize models
-    flows = [AttributeFlow(attr, graph_structure[attr], config["n_layers"], linear_=bool(config[attr + "_linear"])) for attr in attrs]
+    flows = [AttributeFlow(attr, graph_structure[attr], config["n_layers"], linear_=bool(config[attr + "_linear"]), lr=config["lr"]) for attr in attrs]
     # train models
     for flow in flows:
         train_flow(flow=flow, config=config, data_class=CelebaContinuous, graph_structure=graph_structure, attrs=attrs, 
