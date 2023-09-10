@@ -70,4 +70,4 @@ python -m morphomnist.scm.train_flows
 python -m morphomnist.scm.train_vae
 ```
 
-If you would like to visualize or sample from these new models, it is important to first delete the old ones that are stored in `./$/scm/trained_models/checkpoints`. All other scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
+VAEs may be trained either one CPU or (multiple) GPUs. Training the flows on GPU may result in an error. If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./$/scm/trained_models/checkpoints`. All other scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.

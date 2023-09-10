@@ -2,7 +2,7 @@
 
 import matplotlib.pyplot as plt
 import torch
-import tikzplotlib
+#import tikzplotlib
 import torch
 import numpy as np
 import seaborn as sns
@@ -38,8 +38,8 @@ def main(data_dir, idx=5):
     plt.ylim(-3, 3)
     plt.gca().set_aspect('equal')
     #plt.colorbar(location='left')
-    tikzplotlib.save("./morphomnist/visualizations/visualize_uiast_to_utast.tex", extra_axis_parameters=['axis equal image'])
-    #plt.show()
+    #tikzplotlib.save("./morphomnist/visualizations/visualize_uiast_to_utast.tex", extra_axis_parameters=['axis equal image'])
+    plt.show()
 
 if __name__ == "__main__":
     main("./morphomnist/data", idx=5)

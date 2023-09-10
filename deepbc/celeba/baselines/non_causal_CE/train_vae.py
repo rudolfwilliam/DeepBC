@@ -25,10 +25,6 @@ def main():
     config = load(open("./celeba/scm/config/" + args.name + ".json", "r"))
     # overwrite checkpoint path
     config["ckpt_path"]  = "./celeba/baselines/non_causal_CE/trained_models"
-    # make learning rate a bit smaller
-    config["lr"] = 1e-6
-    config["n_chan"] = [3, 64, 128, 128, 256, 512, 1024]
-    config["batch_size_train"] = 256
     # split into train and validation
     train_set, val_set = torch.utils.data.random_split(data, [config["train_val_split"], 1 - config["train_val_split"]])
     # initialize model

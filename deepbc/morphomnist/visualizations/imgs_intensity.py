@@ -2,7 +2,7 @@
 
 import matplotlib.pyplot as plt
 import torch
-import tikzplotlib
+#import tikzplotlib
 import numpy as np
 from morphomnist.data.meta_data import attrs
 from morphomnist.data.datasets import MorphoMNISTLike
@@ -40,9 +40,9 @@ def main(data_dir, idx):
         axs[1, j].set_yticks([])
         axs[1, j].imshow(img_ast_int.view(28, 28).detach().numpy(), cmap='gray', vmin=-0.4, vmax=4.45)
     plt.subplots_adjust(wspace=0, hspace=0)
-    tikzplotlib.save("./morphomnist/visualizations/tex_files/imgs_intensity.tex")
-    plt.savefig("./morphomnist/visualizations/img/imgs_intensity.pdf")
-    #plt.show()
+    #tikzplotlib.save("./morphomnist/visualizations/tex_files/imgs_intensity.tex")
+    #plt.savefig("./morphomnist/visualizations/img/imgs_intensity.pdf")
+    plt.show()
 
 if __name__ == "__main__":
     main("./morphomnist/data", idx=5)

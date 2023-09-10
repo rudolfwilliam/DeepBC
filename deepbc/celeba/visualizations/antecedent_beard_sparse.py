@@ -1,6 +1,6 @@
 from celeba.scm.model import CelebaSCM
 from optim import backtrack_linearize
-from celeba.baselines import sparse_CE, WrongGraphCelebaSCM
+from celeba.baselines import sparse_CE
 import matplotlib.pyplot as plt
 import torch
 

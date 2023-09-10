@@ -1,5 +1,6 @@
 {
     "ckpt_path" : "./celeba/scm/trained_models/classifiers/checkpoints/",
+    "n_chan" : [3, 8, 16, 32, 32, 64, 1],
     "patience" : 5,
     "batch_size_train" : 64,
     "batch_size_val" : 256,

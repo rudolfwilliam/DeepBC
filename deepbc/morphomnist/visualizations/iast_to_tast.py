@@ -2,10 +2,10 @@
 
 import matplotlib.pyplot as plt
 import torch
-import tikzplotlib
+#import tikzplotlib
 import numpy as np
 import seaborn as sns
-from morphomnist.data.datasets import MorphoMNISTLike, normalize
+from morphomnist.data.datasets import MorphoMNISTLike
 from optim import backtrack_linearize
 from morphomnist.scm.model import MmnistSCM
 from morphomnist.data.meta_data import attrs
@@ -39,7 +39,7 @@ def main(data_dir, idx):
     plt.ylim(-3, 4)
     plt.gca().set_aspect('equal')
     plt.show()
-    #tikzplotlib.save("./morphomnist/visualizations/visualize_iast_to_tast.tex")
+    #tikzplotlib.save("./morphomnist/visualizations/visualize_iast_to_tast_new.tex")
 
 if __name__ == "__main__":
     main("./morphomnist/data", idx=5)

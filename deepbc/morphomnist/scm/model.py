@@ -7,9 +7,9 @@ from json import load
 
 class MmnistSCM(SCM):
     def __init__(self, ckpt_path="./morphomnist/scm/trained_models/checkpoints/",
-                 config_path_flow="./celeba/scm/config/flow.json", 
-                 config_path_vae="./celeba/scm/config/vae.json"):
-        config_flow = load(open("./celeba/scm/config/flow.json", "r"))
+                 config_path_flow="./morphomnist/scm/config/flow.json", 
+                 config_path_vae="./morphomnist/scm/config/vae.json"):
+        config_flow = load(open(config_path_flow, "r"))
         config_vae = load(open(config_path_vae, "r"))
         models = {"thickness" : ThicknessFlow(name="thickness", n_layers=config_flow["n_layers_thickness"]), 
                   "intensity" : IntensFlow(name="intensity", n_layers=config_flow["n_layers_intensity"]), 

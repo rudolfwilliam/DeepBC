@@ -2,7 +2,7 @@
 
 import matplotlib.pyplot as plt
 import torch
-import tikzplotlib
+#import tikzplotlib
 import numpy as np
 import seaborn as sns
 from morphomnist.data.datasets import MorphoMNISTLike
@@ -32,9 +32,9 @@ def main(data_dir, idx):
     # contour plot of observed distribution
     sns.kdeplot(x=data.metrics['intensity'], y=data.metrics['thickness'], bw_method=0.3, color=list(plt.rcParams['axes.prop_cycle'])[1]['color'], levels=8, fill=True, thresh=0.01, alpha=0.5)
     # plt.scatter(train_set.metrics['intensity'], train_set.metrics['thickness'], c='r')
-    plt.scatter(xs_ast['intensity'], xs_ast['thickness'], c=list(plt.rcParams['axes.prop_cycle'])[3]['color'], s=0.1)
+    plt.scatter(xs_ast['intensity'], xs_ast['thickness'], c=list(plt.rcParams['axes.prop_cycle'])[3]['color'], s=5)
     # this is what interventional counterfactuals do
-    plt.scatter(rg, torch.full((len(rg),), t), c=list(plt.rcParams['axes.prop_cycle'])[5]['color'], s=0.1)
+    plt.scatter(rg, torch.full((len(rg),), t), c=list(plt.rcParams['axes.prop_cycle'])[5]['color'], s=5)
     plt.plot(i, t, 'o', color=list(plt.rcParams['axes.prop_cycle'])[0]['color'])
     plt.xlim(-3, 3)  # Set x-axis range from -3 to 3
     plt.ylim(-3, 4)
