@@ -18,7 +18,7 @@ def main():
     # overwrite checkpoint path
     config["ckpt_path"] = "./celeba/baselines/wrong_graph/trained_models/checkpoints/"
     # initialize models
-    flows = [AttributeFlow(attr, wrong_graph_structure[attr], config["n_layers"]) for attr in attrs]
+    flows = [AttributeFlow(attr, wrong_graph_structure[attr], config["n_layers"], lr=config["lr"]) for attr in attrs]
     # train models
     for flow in flows:
         train_flow(flow=flow, config=config, data_class=CelebaContinuous, graph_structure=wrong_graph_structure, attrs=attrs,

@@ -1,5 +1,5 @@
 from celeba.scm.model import CelebaSCM
-from optim import backtrack_linearize, backtrack_gradient
+from optim import backtrack_linearize
 import matplotlib.pyplot as plt
 import torch
 

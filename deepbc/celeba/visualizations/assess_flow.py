@@ -2,13 +2,14 @@ from celeba.scm import CelebaSCM
 from celeba.data.meta_data import graph_structure
 import matplotlib.pyplot as plt
 import torch
+#import tikzplotlib
 
 rg = torch.arange(-3, 3, 0.5)
 
 def main():
     # load scm
     scm = CelebaSCM()
-    torch.manual_seed(24)
+    torch.manual_seed(1)
     # sample from scm
     xs, us = scm.sample()
     xs.pop("image")
@@ -21,7 +22,10 @@ def main():
     xs_flat = torch.cat([xs_temp[k] for k in graph_structure[y]], dim=1)
     pred = scm.models[y].decode(us[y].repeat(rg.shape[0], 1), xs_flat)
     plt.scatter(xs_temp[x].squeeze(), pred.squeeze().detach())
+    plt.xlabel(x)
+    plt.ylabel(y)
     plt.show()
+    #tikzplotlib.save("./celeba/visualizations/tex_files/visualize_compare_cfs_intensity.tex")
 
 
 if __name__ == "__main__":
