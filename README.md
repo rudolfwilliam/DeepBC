@@ -50,6 +50,7 @@ We utilize a separate directory for each of the data sets `morphomnist` and `cel
 │      └── ...
 └── ...    
 ```
+
 The coarse directory structure of `morphomnist` is analogous to that of `celeba`.
 
 Configurations for the individual architectures and algorithms can be found in `config` directories within the respective subdirectories. For instance, the configuration for the celeba VAE architecture can be found in `./celeba/scm/config/vae.json`.
@@ -62,12 +63,12 @@ python -m morphomnist.visualizations.tast_to_iast
 
 ## Structural Causal Model (SCM) Training
 
-If you would like to retrain the models that are inside of the structural causal models, run the modules `$.scm.train_flows` and `$.scm.train_vae`, where `$` must be replaced by either `morphomnist` or `celeba`. E.g., for `morphomnist`, run
+If you would like to retrain the models that are inside of the structural causal models, run the modules `$.scm.scripts.train_flows` and `$.scm.scripts.train_vae`, where `$` must be replaced by either `morphomnist` or `celeba`. E.g., for `morphomnist`, run
 
 ```
-python -m morphomnist.scm.train_flows
+python -m morphomnist.scm.scripts.train_flows
 
-python -m morphomnist.scm.train_vae
+python -m morphomnist.scm.scripts.train_vae
 ```
 
-VAEs may be trained either one CPU or (multiple) GPUs. Training the flows on GPU may result in an error. If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./$/scm/trained_models/checkpoints`. All other scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
+VAEs may be trained either on CPU or (potentially multiple) GPUs. Training the flows on GPU may result in an error. If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./$/scm/trained_models/checkpoints`. All scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
