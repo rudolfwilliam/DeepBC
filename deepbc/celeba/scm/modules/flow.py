@@ -16,6 +16,6 @@ class AttributeFlow(GCondFlow):
         for _ in range(n_layers):
             layers.append(AutoregressiveRationalQuadraticSpline(1, 1, 1))
         # flow is conditional on parents
-        layers.append(MaskedAffineAutoregressive(features=1, hidden_features=1, num_blocks=n_blocks, hidden_features=n_hidden, context_features=len(parents)))
+        layers.append(MaskedAffineAutoregressive(features=1, num_blocks=n_blocks, hidden_features=n_hidden, context_features=len(parents)))
         self.flow = CondFlow(base, layers)
         
