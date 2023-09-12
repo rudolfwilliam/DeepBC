@@ -13,7 +13,7 @@ class CelebaSCM(SCM):
         # read parameters from config file
         config_flow = load(open(config_path_flow, "r")) 
         models = {attr : AttributeFlow(name=attr, parents=graph_structure[attr], n_layers=config_flow["n_layers"], 
-                                       n_blocks=config_flow[attr + "_n_blocks"]) for attr in attrs}
+                                       n_hidden=config_flow[attr + "_n_hidden"], n_blocks=config_flow[attr + "_n_blocks"]) for attr in attrs}
         config_vae = load(open(config_path_vae, "r"))
         models["image"] = CelebaCondVAE(n_chan=config_vae["n_chan"], latent_dim=config_vae["latent_dim"], 
                                         beta=config_vae["beta"], lr=config_vae["lr"], cond_dim=len(attrs))

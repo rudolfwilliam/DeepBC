@@ -10,5 +10,9 @@
     "bald_n_blocks" : 6,
     "beard_n_blocks" : 2,
     "age_n_blocks" : 0,
-    "gender_n_blocks" : 0 
+    "gender_n_blocks" : 0,
+    "bald_n_hidden" : 10,
+    "beard_n_hidden" : 1,
+    "age_n_hidden" : 1,
+    "gender_n_hidden" : 1  
 }
