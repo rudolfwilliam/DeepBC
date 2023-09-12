@@ -5,13 +5,14 @@ import matplotlib.pyplot as plt
 import torch
 
 def main():
+    # 11, 24
     torch.manual_seed(13)
     scm = CelebaSCM()
     # generate middle aged man with beard and a bit bald
     xs, us = scm.sample(std=0.5)
-    val_ast = torch.tensor([[3.5]], dtype=torch.float32)
+    val_ast = torch.tensor([[2]], dtype=torch.float32)
     # observational sparse CE baseline
-    us = backtrack_linearize(scm, vars_=["age", "gender", "bald", "beard"], vals_ast=torch.tensor([[-2, 2, 2, -3]], dtype=torch.float32), **us)
+    us = backtrack_linearize(scm, vars_=["age", "gender", "bald", "beard"], vals_ast=torch.tensor([[-2, 2, 1.5, -3]], dtype=torch.float32), **us)
     xs = scm.decode(**us)
     # DeepBC
     us_ast = backtrack_linearize(scm, vars_=["beard"], vals_ast=val_ast, sparse=True, n_largest=2, **us)
@@ -49,7 +50,7 @@ def main():
     plt.title("age: " + str(round(xs["age"].item(), 2)) + " gender: " + str(round(xs["gender"].item(), 2)) + 
               " beard: " + str(val_ast.squeeze().item()) + " bald: " + str(round(xs["bald"].item(), 2)))
 
-    plt.savefig("antecedent_beard_sparse.pdf")
+    #plt.savefig("antecedent_beard_sparse.pdf")
     plt.show()
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ def main(cont_attr_path="./celeba/data/predictions/preds.pt", default_root_dir="
     # initialize models
     flows = [AttributeFlow(attr, graph_structure[attr], config["n_layers"], linear_=bool(config[attr + "_linear"]), lr=config["lr"]) for attr in attrs]
     # train models
-    for flow in flows:
+    for flow in flows: 
         train_flow(flow=flow, config=config, data_class=CelebaContinuous, graph_structure=graph_structure, attrs=attrs, 
                    cont_attr_path=cont_attr_path, default_root_dir=default_root_dir)
     print("done.")

@@ -58,7 +58,7 @@ def main(attr="beard", patience=2, max_epochs=100, train_val_split=0.8, batch_si
     """Train classifier on observed variables."""
     # initialize model
     regressor = Regressor(ckpt_path, name=attr)
-    trainer = pl.Trainer(accelerator="auto", devices="auto", strategy="auto", max_epochs=max_epochs, callbacks=[generate_checkpoint_callback("beard", ckpt_path), 
+    trainer = pl.Trainer(accelerator="auto", devices="auto", strategy="auto", max_epochs=max_epochs, callbacks=[generate_checkpoint_callback(attr, ckpt_path), 
                                                                                                                 generate_early_stopping_callback(patience=patience)], 
                                                                                                                 default_root_dir="./celeba/baselines/sparsity_on_x/")
     # load the data (with continuous labels)
@@ -72,5 +72,5 @@ def main(attr="beard", patience=2, max_epochs=100, train_val_split=0.8, batch_si
     print("done.")
 
 if __name__ == "__main__":
-    main()
+    main(attr="bald")
     

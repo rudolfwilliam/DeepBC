@@ -7,8 +7,8 @@
     "patience" : 2,
     "max_epochs" : 50,
     "train_val_split" : 0.8,
-    "bald_linear" : true,
-    "beard_linear" : false,
-    "age_linear" : true,
-    "gender_linear" : true 
+    "bald_n_blocks" : 6,
+    "beard_n_blocks" : 2,
+    "age_n_blocks" : 0,
+    "gender_n_blocks" : 0 
 }

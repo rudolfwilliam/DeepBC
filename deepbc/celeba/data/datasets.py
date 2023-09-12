@@ -13,7 +13,7 @@ def load_data():
     return data
 
 class CelebaContinuous(Dataset):
-    def __init__(self, cont_attr_path, transform=None):
+    def __init__(self, cont_attr_path="./celeba/data/predictions/preds.pt", transform=None):
         super().__init__()
         self.transform = transform
         self.data = load_data()

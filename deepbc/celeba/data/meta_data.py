@@ -15,7 +15,3 @@ graph_structure = {'age'    : [],
                    'bald'   : ['age', 'gender'],
                    'beard'  : ['age', 'gender'],
                    'image'  : ['age', 'gender', 'bald', 'beard']}
-
-# to show how graph affects results
-wrong_graph_structure = {'age' : [],
-                         }
