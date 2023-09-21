@@ -54,7 +54,7 @@ class Regressor(pl.LightningModule):
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.001)
         
-def main(attr="beard", patience=2, max_epochs=100, train_val_split=0.8, batch_size_train=128, ckpt_path="./celeba/baselines/sparsity_on_x/trained_models/checkpoints/"):
+def main(attr="beard", patience=2, max_epochs=100, train_val_split=0.8, batch_size_train=128, ckpt_path="./celeba/baselines/sparsity_on_observed/trained_models/checkpoints/"):
     """Train classifier on observed variables."""
     # initialize model
     regressor = Regressor(ckpt_path, name=attr)

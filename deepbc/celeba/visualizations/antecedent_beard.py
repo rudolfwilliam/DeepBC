@@ -6,9 +6,16 @@ import torch
 def main():
     torch.manual_seed(0)
     scm = CelebaSCM()
+    attr = "beard"
     xs, us = scm.sample()
-    us_ast = backtrack_linearize(scm, vars_=["age", "beard"], vals_ast=torch.cat([xs["age"] + 40, xs["beard"] - 15], dim=1), **us)
+    us_cp = us.copy()
+    us_ast = backtrack_linearize(scm, vars_=["beard"], vals_ast=torch.cat([xs["age"], xs["beard"]], dim=1), **us_cp)
     xs_ast = scm.decode(**us_ast)
+
+    us_cp = us.copy()
+    us_ast_sparse = backtrack_linearize(scm, vars_=["age", "beard"], vals_ast=torch.cat([xs["age"], xs["beard"]], dim=1), **us_cp)
+    xs_ast_sparse = scm.decode(**us_ast_sparse) 
+
     fig = plt.figure()
     fig.add_subplot(1, 2, 1)
     plt.imshow(xs["image"].squeeze().detach().permute(1, 2, 0))

@@ -4,12 +4,8 @@ from optim import backtrack_linearize
 from utils import override
 from celeba.baselines.sparsity_on_observed.train_regressor import Regressor
 from celeba.data.meta_data import attrs
+import os
 import torch
-
-attr = "beard"
-
-dummy_graph_structure = {**{attr_ : [] for attr_ in attrs if attr_ != attr},
-                         attr : [attr_ for attr_ in attrs if attr_ != attr]}
 
 class IDSE(StructuralEquation):
     """Identity function."""
@@ -27,7 +23,7 @@ class LinearSE(StructuralEquation):
     def __init__(self, name):
         self.name = name  
         super(LinearSE, self).__init__()
-        self.regressor = Regressor(ckpt_path="./celeba/baselines/sparsity_on_observed/trained_models/checkpoints/")
+        self.regressor = Regressor(ckpt_path="./celeba/baselines/sparsity_on_observed/trained_models/checkpoints/", name=name)
     
     def encode(self, x, cond):
         return self.regressor(cond) 
@@ -37,12 +33,12 @@ class LinearSE(StructuralEquation):
 
 class DummySCM(SCM):
     """Imitate counterfactual explanation methods without causal model."""
-    def __init__(self, attr=["beard"], regressor_path="./celeba/baselines/sparsity_on_observed/trained_models/checkpoints/beard-epoch=05.ckpt"):
+    def __init__(self, graph_structure, attr="beard", regressor_path="./celeba/baselines/sparsity_on_observed/trained_models/checkpoints/beard-epoch=05.ckpt"):
         self.attr = attr
         models = {attr_ : IDSE(name=attr_) for attr_ in attrs if attr_ != attr}
         models = {attr : LinearSE(name=attr), **models}
         self.ckpt_path = regressor_path
-        self.graph_structure = dummy_graph_structure
+        self.graph_structure = graph_structure
         self.models = models
         self.__load_parameters()
         # no need for training further
@@ -59,13 +55,17 @@ class DummySCM(SCM):
         for param in self.models[self.attr].regressor.parameters():
             param.requires_grad = False
 
-def sparse_CE(scm, vars_, vals_ast, **us):
+def sparse_CE(scm, vars_, vals_ast, ckpt_path="./celeba/baselines/sparsity_on_observed/trained_models/checkpoints/", **us):
     # xs and us are identical
+    dummy_graph_structure = {**{attr_ : [] for attr_ in attrs if attr_ != vars_[0]},
+                                vars_[0] : [attr_ for attr_ in attrs if attr_ != vars_[0]]}
     xs = scm.decode(**us)
     xs_copy = xs.copy()
     xs_copy.pop("image")
-    scm_attr = DummySCM(attr=vars_[0])
+    # find right path for regressor parameters
+    file_name = next((file for file in os.listdir(ckpt_path) if file.startswith(vars_[0])), None)
+    scm_attr = DummySCM(attr=vars_[0], graph_structure=dummy_graph_structure, regressor_path=ckpt_path + file_name,)
     xs_ast = backtrack_linearize(scm=scm_attr, vals_ast=vals_ast, vars_=vars_, sparse=True, n_largest=1, **xs_copy)
-    xs_ast[attr] = scm_attr.models[attr].regressor(torch.cat([xs_ast[pa] for pa in scm_attr.graph_structure[attr]], dim=1))
+    xs_ast[vars_[0]] = scm_attr.models[vars_[0]].regressor(torch.cat([xs_ast[pa] for pa in scm_attr.graph_structure[vars_[0]]], dim=1))
     img_ast = scm.models["image"].decode(us["image"], torch.cat([xs_ast[pa] for pa in scm.graph_structure["image"]], dim=1))
     return {"image" : img_ast, **xs_ast}

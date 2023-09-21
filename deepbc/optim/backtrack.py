@@ -2,7 +2,7 @@
 
 import torch
 
-def backtrack_linearize(scm, vars_, vals_ast, lambda_=5000, num_it=30, sparse=False, n_largest=2, const_idxs=None, **us):
+def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e5, num_it=50, sparse=False, n_largest=2, const_idxs=None, **us):
     """Backtracking with constraint linearization (recommended). Can be done in a batched fashion.
 
        :param SCM scm: Structural causal model to be used
@@ -18,7 +18,9 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=5000, num_it=30, sparse=Fa
     """
     us_pr = initialize_us_pr(**us)
     # we need to work with flattened us_pr tensor for practical reasons
-    us_pr_flat = torch.cat([u for u in us_pr.values()], dim=1)
+    us_pr_flat_init = torch.cat([u for u in us_pr.values()], dim=1)
+    # optimize over these
+    us_pr_flat = us_pr_flat_init.clone().detach().requires_grad_()
     # leave out constant variables
     if const_idxs is not None:
         active_idxs = torch.tensor([i for i in range(us_pr_flat.shape[1]) if i not in const_idxs])
@@ -38,7 +40,7 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=5000, num_it=30, sparse=Fa
         # solve closed form for linearization 
         with torch.no_grad():
             right = torch.eye(us_pr_flat[:, active_idxs].shape[1]) + lambda_ * torch.bmm(J, J.transpose(1, 2))
-            left = us_pr_flat[:, active_idxs].unsqueeze(1) + lambda_ * torch.bmm(temp.unsqueeze(1), torch.transpose(J, 1, 2))
+            left = us_pr_flat_init[:, active_idxs].unsqueeze(1) + lambda_ * torch.bmm(temp.unsqueeze(1), torch.transpose(J, 1, 2))
             us_pr_flat[:, active_idxs] = torch.bmm(left, torch.inverse(right)).squeeze(1)
         us_pr_flat = us_pr_flat.clone().detach().requires_grad_()
     if sparse:
@@ -79,7 +81,7 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=10000, num_it=30000, lr=1e-
             us_pr_flat.grad = us_pr_flat.grad * mask 
         with torch.no_grad():
             us_pr_flat = us_pr_flat - lr*us_pr_flat.grad
-        us_pr_flat.requires_grad = True 
+        us_pr_flat.requires_grad = True
         if i % 10 == 0:
             print(f"loss: {loss.item()}")
     us_ast = unflatten(us_pr_flat.detach(), us_pr)
@@ -109,6 +111,3 @@ def sparsify(scm, vars_, vals_ast, us_pr_flat, lambda_=10000, num_it=30, n_large
         return backtrack_linearize(scm, vars_, vals_ast, lambda_=lambda_, num_it=num_it, const_idxs=const_idxs, sparse=False, **us)
     else:
         return backtrack_gradient(scm, vars_, vals_ast, lambda_=lambda_, num_it=num_it, const_idxs=const_idxs, dist_fun='l2', **us)
-
-
-        

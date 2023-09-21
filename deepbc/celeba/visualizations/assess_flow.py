@@ -4,17 +4,17 @@ import matplotlib.pyplot as plt
 import torch
 #import tikzplotlib
 
-rg = torch.arange(-3, 3, 0.5)
+rg = torch.arange(-3, 4, 0.5)
 
 def main():
     # load scm
     scm = CelebaSCM()
-    torch.manual_seed(1)
+    torch.manual_seed(42)
     # sample from scm
     xs, us = scm.sample()
     xs.pop("image")
     x = "age"
-    y = "bald"
+    y = "beard"
     xs_temp = xs.copy()
     for pa in graph_structure[y]:
         xs_temp[pa] = xs_temp[pa].repeat(rg.shape[0], 1)

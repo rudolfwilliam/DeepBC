@@ -14,8 +14,9 @@ def main(cont_attr_path="./celeba/data/predictions/preds.pt", default_root_dir="
                            n_hidden=config[attr + "_n_hidden"], n_blocks=config[attr + "_n_blocks"], lr=config["lr"]) for attr in attrs]
     # train models
     for flow in flows: 
-        train_flow(flow=flow, config=config, data_class=CelebaContinuous, graph_structure=graph_structure, attrs=attrs, 
-                   cont_attr_path=cont_attr_path, default_root_dir=default_root_dir)
+        if flow.name == "bald":
+            train_flow(flow=flow, config=config, data_class=CelebaContinuous, graph_structure=graph_structure, attrs=attrs, 
+                       cont_attr_path=cont_attr_path, default_root_dir=default_root_dir)
     print("done.")
 
 if __name__ == "__main__":
