@@ -39,7 +39,7 @@ def main():
     xs_ast0 = scm.decode(**us_ast)
     # What had been, had she been bearded and male?
     us_cp = us.copy()
-    us_ast = backtrack_linearize(scm, vars_=["gender", "beard"], vals_ast=torch.tensor([[2, -4]], dtype=torch.float32), **us_cp) 
+    us_ast = backtrack_linearize(scm, vars_=["gender", "beard"], lambda_=1e8, num_it=100, vals_ast=torch.tensor([[2, -4]], dtype=torch.float32), **us_cp) 
     xs_ast1 = scm.decode(**us_ast) 
     fig.add_subplot(2, 3, 4)
     plt.imshow(xs["image"].squeeze().detach().permute(1, 2, 0))
@@ -58,4 +58,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    

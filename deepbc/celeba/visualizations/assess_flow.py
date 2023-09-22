@@ -13,8 +13,8 @@ def main():
     # sample from scm
     xs, us = scm.sample()
     xs.pop("image")
-    x = "age"
-    y = "beard"
+    x = "gender"
+    y = "bald"
     xs_temp = xs.copy()
     for pa in graph_structure[y]:
         xs_temp[pa] = xs_temp[pa].repeat(rg.shape[0], 1)

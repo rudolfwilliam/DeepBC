@@ -2,7 +2,7 @@
 
 import torch
 
-def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e5, num_it=50, sparse=False, n_largest=2, const_idxs=None, **us):
+def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=False, n_largest=2, const_idxs=None, **us):
     """Backtracking with constraint linearization (recommended). Can be done in a batched fashion.
 
        :param SCM scm: Structural causal model to be used
@@ -18,7 +18,7 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e5, num_it=50, sparse=Fal
     """
     us_pr = initialize_us_pr(**us)
     # we need to work with flattened us_pr tensor for practical reasons
-    us_pr_flat_init = torch.cat([u for u in us_pr.values()], dim=1)
+    us_pr_flat_init = torch.cat([u for u in us_pr.values()], dim=1).detach()
     # optimize over these
     us_pr_flat = us_pr_flat_init.clone().detach().requires_grad_()
     # leave out constant variables

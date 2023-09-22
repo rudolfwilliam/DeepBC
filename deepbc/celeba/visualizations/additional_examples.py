@@ -1,5 +1,5 @@
 from celeba.scm.model import CelebaSCM
-from optim import backtrack_linearize
+from optim import backtrack_linearize, backtrack_gradient
 from celeba.baselines import WrongGraphCelebaSCM, TwoCompSCM, sparse_CE
 import matplotlib.pyplot as plt
 import torch
@@ -11,7 +11,7 @@ def main():
     #us = backtrack_linearize(scm, vars_=["age"], vals_ast=torch.tensor([[2]], dtype=torch.float32), sparse=False, **us) 
     #xs = scm.decode(**us)
     us_cp = us.copy()
-    val_ast = torch.tensor([[4]], dtype=torch.float32)
+    val_ast = torch.tensor([[3]], dtype=torch.float32)
     us_ast = backtrack_linearize(scm, vars_=["bald"], vals_ast=val_ast, sparse=False, **us_cp) 
     xs_ast = scm.decode(**us_ast)
     us_cp = us.copy()
@@ -40,7 +40,7 @@ def main():
     # non-causal baseline 
     nc_scm = TwoCompSCM(attr="bald")
     us_nc = {"image" : nc_scm.models["image"].encode(xs["image"], torch.zeros_like(us_cp["bald"])), "bald" : torch.zeros_like(us_cp["bald"])}
-    us_ast_nc = backtrack_linearize(nc_scm, vars_=["bald"], vals_ast=val_ast, sparse=False, lambda_=5000, num_it=30, **us_nc)
+    us_ast_nc = backtrack_linearize(nc_scm, vars_=["bald"], vals_ast=val_ast, lambda_=1e6, num_it=300, **us_nc)
     xs_ast_nc = nc_scm.decode(**us_ast_nc)
 
     # endogenous sparsity
@@ -63,8 +63,8 @@ def main():
     plt.imshow(xs_ast_nc["image"].squeeze().detach().permute(1, 2, 0))
     fig.add_subplot(2, 4, 8)
     plt.imshow(xs_ast_ends["image"].squeeze().detach().permute(1, 2, 0))
-    #plt.show()
-    plt.savefig("additional_examples.pdf")
+    plt.show()
+    #plt.savefig("additional_examples.pdf")
 
 if __name__ == "__main__":
     main()

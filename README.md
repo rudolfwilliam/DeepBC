@@ -1,6 +1,6 @@
 # Deep Backtracking Counterfactuals (DeepBC)
 
-Repository for the paper *Deep Backtracking Counterfactuals for Causally Compliant Explanations*
+Repository for the paper *Deep Backtracking Counterfactuals for Causally Compliant Explanations*.
 
 <p align="center">
 <img src="/assets/DeepBC_plot_github.svg" width="500">
