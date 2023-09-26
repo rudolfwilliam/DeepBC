@@ -49,7 +49,7 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=Fal
     us_ast = unflatten(us_pr_flat.detach(), us_pr)
     return us_ast
 
-def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun='l1'):
+def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun='l2'):
     """Compute the loss for the backtracking problem, required for gradient based optimization. 
        Can be done in a batched fashion, but not recommended due to highly variable convergence time and sensitivity for lambda_."""
     if dist_fun == 'l2':
@@ -61,8 +61,8 @@ def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun='l1'):
     return loss.sum()
 
 def backtrack_gradient(scm, vars_, vals_ast, lambda_=10000, num_it=30000, lr=1e-6, dist_fun='l2', const_idxs=None, **us):
-    """Simple gradient descent method for solving the backtracking problem (not recommended, can be unstable)"""
-    # initialize "us prime"
+    """First-order method (Adam) for solving the backtracking problem (not recommended, can be unstable)"""
+    # initialize "us prime" 
     us_pr = initialize_us_pr(**us)
     # we need to work with flattened us tensors for practical reasons
     # keep us_flat fixed
@@ -70,6 +70,7 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=10000, num_it=30000, lr=1e-
     us_flat.requires_grad = False
     # these are the variables we want to optimize
     us_pr_flat = torch.cat([u for u in us_pr.values()], dim=1).detach().requires_grad_() 
+    optimizer = torch.optim.Adam([us_pr_flat], lr=lr)
     # optimize
     for i in range(num_it):
         loss = bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun)
@@ -79,9 +80,8 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=10000, num_it=30000, lr=1e-
             mask = torch.ones_like(us_pr_flat, dtype=torch.float32)
             mask[:, const_idxs] = 0
             us_pr_flat.grad = us_pr_flat.grad * mask 
-        with torch.no_grad():
-            us_pr_flat = us_pr_flat - lr*us_pr_flat.grad
-        us_pr_flat.requires_grad = True
+        optimizer.step()
+        optimizer.zero_grad()
         if i % 10 == 0:
             print(f"loss: {loss.item()}")
     us_ast = unflatten(us_pr_flat.detach(), us_pr)

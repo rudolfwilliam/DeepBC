@@ -10,7 +10,7 @@ def main():
     scm = CelebaSCM()
     torch.manual_seed(1)
     # sample from scm
-    xs, us = scm.sample(std=0)
+    xs, us = scm.sample(std=0.5)
     xs.pop("image")
     _, axs = plt.subplots(4, len(rg))
     # change values for attributes
