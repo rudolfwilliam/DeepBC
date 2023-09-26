@@ -31,7 +31,7 @@ We utilize a separate directory for each of the data sets `morphomnist` and `cel
 
 ```
 .
-├── FIGURE_GUIDE.md                           # Guide for reproducing visualizations
+├── FIGURE_GUIDE.md                           # Guide for reproducing figures
 ├── deepbc
 │      ├── optim                              # DeepBC optimization algorithms
 │      ├── data                               # General data functionality
@@ -56,9 +56,9 @@ The coarse directory structure of `morphomnist` is analogous to that of `celeba`
 
 Configurations for the individual architectures and algorithms can be found in `config` directories within the respective subdirectories. For instance, the configuration for the celeba VAE architecture can be found in `./celeba/scm/config/vae.json`.
 
-## Visualizations
+## Figures
 
-You can reproduce all visualizations from the paper by running the corresponding modules as described in `FIGURE_GUIDE.md`. For instance, if we would like to reproduce Fig. 3, we need to run
+You can reproduce all figures from the paper by running the corresponding modules as described in `FIGURE_GUIDE.md`. For instance, if we would like to reproduce Fig. 3, we need to run
 
 ```
 python -m morphomnist.visualizations.tast_to_iast

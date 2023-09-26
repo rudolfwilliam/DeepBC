@@ -27,3 +27,5 @@ Fig. 6 (b): `python -m celeba.visualizations.multi_antecedents`
 Fig. 6 (c): `python -m celeba.visualizations.antecedent_beard_suppl`
 
 Fig. 6 (d): `python -m celeba.visualizations.comp_nc_suppl`
+
+All the figures from the paper that are not listed here were created manually.
