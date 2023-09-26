@@ -1,6 +1,6 @@
 from celeba.scm.model import CelebaSCM
-from optim import backtrack_linearize, backtrack_gradient
-from celeba.baselines import sparse_CE, WrongGraphCelebaSCM, TwoCompSCM
+from optim import backtrack_linearize
+from celeba.baselines import sparse_CE, WrongGraphCelebaSCM
 import matplotlib.pyplot as plt
 import torch
 
@@ -60,8 +60,6 @@ def main():
     plt.imshow(xs_ast_wg["image"].squeeze().detach().permute(1, 2, 0))
     plt.title("age: " + str(round(xs_ast_wg["age"].item(), 2)) + " gender: " + str(round(xs_ast_wg["gender"].item(), 2)) + 
               " beard: " + str(round(xs_ast_wg["beard"].item(), 2)) + " bald: " + str(round(xs_ast_wg["bald"].item(), 2)))
-
-    plt.savefig("antecedent_beard_sparse.pdf")
     
     plt.show()
 

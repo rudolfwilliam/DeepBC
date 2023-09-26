@@ -53,8 +53,7 @@ def main():
     plt.imshow(xs_ast1["image"].squeeze().detach().permute(1, 2, 0))
     plt.title("age: " + str(round(xs_ast1["age"].item(), 2)) + " gender: " + str(round(xs_ast1["gender"].item(), 2)) + 
               " beard: " + str(round(xs_ast1["beard"].item(), 2)) + " bald: " + str(round(xs_ast1["bald"].item(), 2)))
-    plt.show()
-    #plt.savefig("multi_antecedents.pdf")
+    plt.show() 
 
 if __name__ == "__main__":
     main()
