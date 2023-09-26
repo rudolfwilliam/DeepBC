@@ -58,7 +58,7 @@ Configurations for the individual architectures and algorithms can be found in `
 
 ## Visualizations
 
-You can reproduce all visualizations from the paper by running the corresponding modules as described in `GUIDE.md`. For instance, if we would like to reproduce Fig. 3, we need to run
+You can reproduce all visualizations from the paper by running the corresponding modules as described in `FIGURE_GUIDE.md`. For instance, if we would like to reproduce Fig. 3, we need to run
 
 ```
 python -m morphomnist.visualizations.tast_to_iast
