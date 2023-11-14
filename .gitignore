@@ -164,7 +164,6 @@ tex_files/
 .vscode/
 
 deepbc/celeba/data/celeba/*
-deepbc/morphomnist/data/*
 deepbc/celeba/scm/lightning_logs
 deepbc/morphomnist/scm/lightning_logs
 lightning_logs

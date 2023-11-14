@@ -2,7 +2,8 @@
 
 import torch
 
-def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=False, n_largest=2, const_idxs=None, **us):
+def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=False, n_largest=2, 
+                        const_idxs=None, log=False, log_file=None, **us):
     """Backtracking with constraint linearization (recommended). Can be done in a batched fashion.
 
        :param SCM scm: Structural causal model to be used
@@ -11,8 +12,10 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=Fal
        :param float lambda_: The weight of the constraint
        :param int num_it: The number of iterations
        :param bool sparse: Whether to run sparse DeepBC
-       :param int n_largest: The number of largest components to be considered in sparse DeepBC. Only considered if sparse=True.
-       :param list const_idx: The indices of variables to keep constant during optimization
+       :param int n_largest: The number of largest components to be considered in sparse DeepBC. Only considered if sparse=True
+       :param list const_idx: The indices of variables to keep constant during optimization (used for sparse DeepBC)
+       :param bool log: Whether to log the loss during optimization.
+       :param string log_file: filename for logging. Only considered if log=True.
        :param dict us: A dictionary containing the factual exogenous values of the SCM variables
        :return dict us_ast: A dictionary containing the counterfactual exogenous values of the SCM variables
     """
@@ -21,6 +24,9 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=Fal
     us_pr_flat_init = torch.cat([u for u in us_pr.values()], dim=1).detach()
     # optimize over these
     us_pr_flat = us_pr_flat_init.clone().detach().requires_grad_()
+    if log:
+        losses = []
+        losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat_init, dist_fun='l2'))
     # leave out constant variables
     if const_idxs is not None:
         active_idxs = torch.tensor([i for i in range(us_pr_flat.shape[1]) if i not in const_idxs])
@@ -43,9 +49,14 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=Fal
             left = us_pr_flat_init[:, active_idxs].unsqueeze(1) + lambda_ * torch.bmm(temp.unsqueeze(1), torch.transpose(J, 1, 2))
             us_pr_flat[:, active_idxs] = torch.bmm(left, torch.inverse(right)).squeeze(1)
         us_pr_flat = us_pr_flat.clone().detach().requires_grad_()
+        if log:
+            losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat_init, dist_fun='l2'))
     if sparse:
         # jumps into a recursion
-        return sparsify(scm, vars_, vals_ast, us_pr_flat, n_largest=n_largest, **us)
+        return sparsify(scm, vars_, vals_ast, us_pr_flat, n_largest=n_largest, log=log, log_file=log_file, **us)
+    if log:
+        # save losses for plotting
+        torch.save(torch.tensor(losses), log_file + '.pt')
     us_ast = unflatten(us_pr_flat.detach(), us_pr)
     return us_ast
 
@@ -60,8 +71,21 @@ def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun='l2'):
     loss = dist + constr
     return loss.sum()
 
-def backtrack_gradient(scm, vars_, vals_ast, lambda_=10000, num_it=30000, lr=1e-6, dist_fun='l2', const_idxs=None, **us):
-    """First-order method (Adam) for solving the backtracking problem (not recommended, can be unstable)"""
+def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=30000, lr=1e-3, dist_fun='l2', 
+                       const_idxs=None, log=False, log_file=None, **us):
+    """First-order method (Adam) for solving the backtracking problem (not recommended, can be unstable).
+
+       :param SCM scm: Structural causal model to be used
+       :param list vars_: The antecedent variables
+       :param torch.Tensor vals_ast: A tensor of shape (batch_size, len(vars_)) containing the desired antecedent values
+       :param float lambda_: The weight of the constraint
+       :param int num_it: The number of iterations
+       :param list const_idx: The indices of variables to keep constant during optimization (used for sparse DeepBC)
+       :param bool log: Whether to log the loss during optimization.
+       :param string log_file: filename for logging. Only considered if log=True.
+       :param dict us: A dictionary containing the factual exogenous values of the SCM variables
+       :return dict us_ast: A dictionary containing the counterfactual exogenous values of the SCM variables
+    """
     # initialize "us prime" 
     us_pr = initialize_us_pr(**us)
     # we need to work with flattened us tensors for practical reasons
@@ -70,9 +94,12 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=10000, num_it=30000, lr=1e-
     us_flat.requires_grad = False
     # these are the variables we want to optimize
     us_pr_flat = torch.cat([u for u in us_pr.values()], dim=1).detach().requires_grad_() 
+    if log:
+        losses = []
+        losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat, dist_fun='l2'))
     optimizer = torch.optim.Adam([us_pr_flat], lr=lr)
     # optimize
-    for i in range(num_it):
+    for _ in range(num_it):
         loss = bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun)
         loss.backward()
         # mask out constant variables
@@ -82,8 +109,11 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=10000, num_it=30000, lr=1e-
             us_pr_flat.grad = us_pr_flat.grad * mask 
         optimizer.step()
         optimizer.zero_grad()
-        if i % 10 == 0:
-            print(f"loss: {loss.item()}")
+        if log:
+            losses.append(loss.item())
+    if log:
+        # save losses for plotting
+        torch.save(torch.tensor(losses), log_file + '.pt')
     us_ast = unflatten(us_pr_flat.detach(), us_pr)
     return us_ast
 
@@ -102,12 +132,15 @@ def unflatten(us_pr_flat, us_pr):
         prev += u.shape[1]
     return us_pr_new
 
-def sparsify(scm, vars_, vals_ast, us_pr_flat, lambda_=10000, num_it=30, n_largest=2, linearize=True, **us):
+def sparsify(scm, vars_, vals_ast, us_pr_flat, lambda_=10000, num_it=30, n_largest=2, 
+             linearize=True, log=False, log_file=None, **us):
     # only select components of us_pr_flat that have a large deviation from us_flat
     us_flat = torch.cat([u for u in us.values()], dim=1).detach()
     _, top_idxs = torch.topk(torch.abs(us_pr_flat - us_flat), n_largest)
     const_idxs = torch.tensor([i for i in range(us_pr_flat.shape[1]) if i not in top_idxs])
     if linearize:
-        return backtrack_linearize(scm, vars_, vals_ast, lambda_=lambda_, num_it=num_it, const_idxs=const_idxs, sparse=False, **us)
+        return backtrack_linearize(scm, vars_, vals_ast, lambda_=lambda_, num_it=num_it, const_idxs=const_idxs, 
+                                   sparse=False, log=log, log_file=log_file, **us)
     else:
-        return backtrack_gradient(scm, vars_, vals_ast, lambda_=lambda_, num_it=num_it, const_idxs=const_idxs, dist_fun='l2', **us)
+        return backtrack_gradient(scm, vars_, vals_ast, lambda_=lambda_, num_it=num_it, const_idxs=const_idxs, 
+                                  dist_fun='l2', log=log, log_file=log_file, **us)

@@ -15,21 +15,21 @@ class CondVAE(StructuralEquation, pl.LightningModule):
         self.decoder = decoder
         self.beta = beta
         self.lr = lr
-    
+
     def __reparameterize(self, mu, log_var):
         """Reparameterization trick"""
         std = torch.exp(0.5 * log_var)
         eps = torch.randn_like(std)
         u = eps * std + mu
         return u
-    
+
     def encode(self, x, cond, logvar=False):
         mu_u, logvar_u = self.encoder(x, cond)
         if logvar:
             return mu_u, logvar_u
         else:
             return mu_u
-    
+
     def decode(self, u, cond):
         x = self.decoder(u, cond)
         return x
@@ -45,11 +45,11 @@ class CondVAE(StructuralEquation, pl.LightningModule):
         u = self.__reparameterize(mu_u, logvar_u)
         x = self.decode(u, cond)
         return x, mu_u, logvar_u
-    
+
     def configure_optimizers(self):
         optimizer = Adam(self.parameters(), lr=self.lr)
         return optimizer
-    
+
     def training_step(self, train_batch, batch_idx):
         x, cond = train_batch
         xhat, mu_u, logvar_u = self.forward(x, cond)
