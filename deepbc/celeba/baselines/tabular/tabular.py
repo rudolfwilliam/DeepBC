@@ -2,7 +2,7 @@ from scm.model import SCM
 from scm.modules import StructuralEquation
 from optim import backtrack_linearize
 from utils import override
-from celeba.baselines.sparsity_on_observed.train_regressor import Regressor
+from celeba.baselines.tabular.train_regressor import Regressor
 from celeba.data.meta_data import attrs
 import os
 import torch
@@ -55,7 +55,7 @@ class DummySCM(SCM):
         for param in self.models[self.attr].regressor.parameters():
             param.requires_grad = False
 
-def sparse_CE(scm, vars_, vals_ast, ckpt_path="./celeba/baselines/sparsity_on_observed/trained_models/checkpoints/", **us):
+def tab_CE(scm, vars_, vals_ast, ckpt_path="./celeba/baselines/sparsity_on_observed/trained_models/checkpoints/", sparse=True, **us):
     # xs and us are identical
     dummy_graph_structure = {**{attr_ : [] for attr_ in attrs if attr_ != vars_[0]},
                                 vars_[0] : [attr_ for attr_ in attrs if attr_ != vars_[0]]}
@@ -64,8 +64,8 @@ def sparse_CE(scm, vars_, vals_ast, ckpt_path="./celeba/baselines/sparsity_on_ob
     xs_copy.pop("image")
     # find right path for regressor parameters
     file_name = next((file for file in os.listdir(ckpt_path) if file.startswith(vars_[0])), None)
-    scm_attr = DummySCM(attr=vars_[0], graph_structure=dummy_graph_structure, regressor_path=ckpt_path + file_name,)
-    xs_ast = backtrack_linearize(scm=scm_attr, vals_ast=vals_ast, vars_=vars_, sparse=True, n_largest=1, **xs_copy)
+    scm_attr = DummySCM(attr=vars_[0], graph_structure=dummy_graph_structure, regressor_path=ckpt_path + file_name)
+    xs_ast = backtrack_linearize(scm=scm_attr, vals_ast=vals_ast, vars_=vars_, **xs_copy)
     xs_ast[vars_[0]] = scm_attr.models[vars_[0]].regressor(torch.cat([xs_ast[pa] for pa in scm_attr.graph_structure[vars_[0]]], dim=1))
     img_ast = scm.models["image"].decode(us["image"], torch.cat([xs_ast[pa] for pa in scm.graph_structure["image"]], dim=1))
     return {"image" : img_ast, **xs_ast}

@@ -12,20 +12,17 @@ def main():
  
     us = backtrack_linearize(scm, vars_=["age", "gender", "beard"], vals_ast=torch.tensor([[0, 2.5, -2.5]], dtype=torch.float32), **us)
     xs = scm.decode(**us)
-    
-    # DeepBC
-    us_cp = us.copy()
-    us_ast = backtrack_linearize(scm, vars_=[attr], vals_ast=val_ast, sparse=True, n_largest=2, **us_cp)
+
+    # DeepBC 
+    us_ast = backtrack_linearize(scm, vars_=[attr], vals_ast=val_ast, sparse=True, n_largest=2, **us)
     xs_ast_sparse = scm.decode(**us_ast)
     # DeepBC with observational sparse CE baseline
-    us_cp = us.copy()
-    xs_ast_obs = sparse_CE(scm, vars_=[attr], vals_ast=val_ast, **us_cp)
+    xs_ast_obs = sparse_CE(scm, vars_=[attr], vals_ast=val_ast, **us)
 
     # interventional counterfactual
     xs_int = xs.copy()
-    us_cp = us.copy()
     xs_int[attr] = val_ast
-    xs_ast_int_img = scm.models["image"].decode(us_cp["image"], torch.cat([xs_int[attr] for attr in scm.graph_structure["image"]], dim=1))
+    xs_ast_int_img = scm.models["image"].decode(us["image"], torch.cat([xs_int[attr] for attr in scm.graph_structure["image"]], dim=1))
 
     fig = plt.figure()
     fig.add_subplot(1, 3, 1)

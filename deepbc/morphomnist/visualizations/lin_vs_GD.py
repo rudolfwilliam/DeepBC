@@ -31,19 +31,20 @@ def main(data_dir, idx):
     fig, axs = plt.subplots(1, 3, figsize=(15, 5))
     for i, la in enumerate(lambdas):
         us_cp = us.copy()
-        us_ast = backtrack_linearize(scm, vars_=['intensity'], vals_ast=rg, lambda_=la, num_it=100, log=True, log_file='loss', **us)
+        us_ast = backtrack_linearize(scm, vars_=['intensity'], vals_ast=rg, lambda_=la, num_it=200, log=True, log_file='loss', **us)
         # losses
         losses = torch.load('loss.pt')
         axs[i].plot(losses, label='linearization')
         axs[i].set_title(r'$\lambda$ = ' + lambdas_str[i])
         axs[i].set_xlabel("\# it")
+        axs[i].set_yscale("log")
         if i == 0:
             axs[i].set_ylabel("$\mathcal{L}$")
         xs_ast_lin = scm.decode(**us_ast)
         print("constraint loss for linearize " + str(la), torch.sum((xs_ast_lin["intensity"] - rg)**2))
         for j, lr in enumerate(lrs):
             us_cp = us.copy()
-            us_ast = backtrack_gradient(scm, vars_=['intensity'], vals_ast=rg, log=True, num_it=100, lambda_=la, lr=lr, log_file="loss", **us_cp)
+            us_ast = backtrack_gradient(scm, vars_=['intensity'], vals_ast=rg, log=True, num_it=200, lambda_=la, lr=lr, log_file="loss", **us_cp)
             losses = torch.load('loss.pt')
             axs[i].plot(losses, label='Adam: lr=' + lrs_str[j])
             xs_ast_grad = scm.decode(**us_ast)
@@ -64,4 +65,3 @@ def tikzplotlib_fix_ncols(obj):
 
 if __name__ == "__main__":
     main(data_dir="./morphomnist/data", idx=5)
-    

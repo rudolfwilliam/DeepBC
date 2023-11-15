@@ -3,6 +3,7 @@
 from torch.utils.data import Dataset
 from torchvision.datasets import CelebA
 from torchvision.transforms import Resize, ToTensor, Normalize, CenterCrop, Compose, ConvertImageDtype
+from celeba.data.meta_data import attrs, vars2int
 import torch
 
 DATA_PATH = "./celeba/data"
@@ -13,9 +14,10 @@ def load_data():
     return data
 
 class CelebaContinuous(Dataset):
-    def __init__(self, cont_attr_path="./celeba/data/predictions/preds.pt", transform=None):
+    def __init__(self, cont_attr_path="./celeba/data/predictions/preds.pt", transform=None, as_dict=False):
         super().__init__()
         self.transform = transform
+        self.as_dict = as_dict
         self.data = load_data()
         self.cont_attr = torch.load(cont_attr_path)
 
@@ -25,6 +27,8 @@ class CelebaContinuous(Dataset):
     def __getitem__(self, idx):
         if self.transform:
             return self.transform(self.data[idx][0], self.cont_attr[idx])
+        if self.as_dict:
+            return {**{attr : self.cont_attr[idx][vars2int[attr]].view(1, -1) for attr in attrs}, "image" : self.data[idx][0].unsqueeze(0)}
         return self.data[idx][0], self.cont_attr[idx]
 
 # Custom transform to only select attributes

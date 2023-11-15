@@ -34,13 +34,18 @@ class SCM(nn.Module):
                 us[var] = self.models[var].encode(xs[var], torch.cat([xs[pa] for pa in self.graph_structure[var]], dim=1))
         return us
 
-    def decode(self, **us):
+    def decode(self, repl=None, **us):
+        """If repl (replace) is not None, then the variables in repl (dict) are intervened on."""
         xs = {}
         for var in self.graph_structure.keys():
-            if len(self.graph_structure[var]) == 0:
-                xs[var] = self.models[var].decode(us[var], torch.tensor([]).view(us[var].shape[0], 0))
+            if repl is None or var not in repl.keys():
+                if len(self.graph_structure[var]) == 0:
+                    xs[var] = self.models[var].decode(us[var], torch.tensor([]).view(us[var].shape[0], 0))
+                else:
+                    xs[var] = self.models[var].decode(us[var], torch.cat([xs[pa] for pa in self.graph_structure[var]], dim=1))
             else:
-                xs[var] = self.models[var].decode(us[var], torch.cat([xs[pa] for pa in self.graph_structure[var]], dim=1))
+                # model intervention
+                xs[var] = repl[var]
         return xs
     
     def decode_flat(self, us):

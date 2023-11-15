@@ -54,13 +54,13 @@ class Regressor(pl.LightningModule):
     def configure_optimizers(self):
         return torch.optim.Adam(self.parameters(), lr=0.001)
         
-def main(attr="beard", patience=2, max_epochs=100, train_val_split=0.8, batch_size_train=128, ckpt_path="./celeba/baselines/sparsity_on_observed/trained_models/checkpoints/"):
+def main(attr="beard", patience=2, max_epochs=100, train_val_split=0.8, batch_size_train=128, ckpt_path="./celeba/baselines/tabular/trained_models/checkpoints/"):
     """Train classifier on observed variables."""
     # initialize model
     regressor = Regressor(ckpt_path, name=attr)
     trainer = pl.Trainer(accelerator="auto", devices="auto", strategy="auto", max_epochs=max_epochs, callbacks=[generate_checkpoint_callback(attr, ckpt_path), 
                                                                                                                 generate_early_stopping_callback(patience=patience)], 
-                                                                                                                default_root_dir="./celeba/baselines/sparsity_on_x/")
+                                                                                                                default_root_dir="./celeba/baselines/tabular/")
     # load the data (with continuous labels)
     data = CelebaContinuous(cont_attr_path="./celeba/data/predictions/preds.pt", transform=SelectAttributesTransform(attrs.index(attr), [attrs.index(attr_) for attr_ in attrs if attr_ != attr]))
     # split into train and validation
@@ -72,5 +72,5 @@ def main(attr="beard", patience=2, max_epochs=100, train_val_split=0.8, batch_si
     print("done.")
 
 if __name__ == "__main__":
-    main(attr="bald")
+    main(attr="gender")
     
