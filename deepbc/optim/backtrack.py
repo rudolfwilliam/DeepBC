@@ -3,7 +3,7 @@
 import torch
 
 def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=False, n_largest=2, 
-                        const_idxs=None, log=False, log_file=None, **us):
+                        weights=None, const_idxs=None, log=False, log_file=None, **us):
     """Backtracking with constraint linearization (recommended). Can be done in a batched fashion.
 
        :param SCM scm: Structural causal model to be used
@@ -13,6 +13,8 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=Fal
        :param int num_it: The number of iterations
        :param bool sparse: Whether to run sparse DeepBC
        :param int n_largest: The number of largest components to be considered in sparse DeepBC. Only considered if sparse=True
+       :param dict weights: Optional weights (must be greater than 0) to encourage variable value preservation 
+       (large relative value means strong preservation)
        :param list const_idx: The indices of variables to keep constant during optimization (used for sparse DeepBC)
        :param bool log: Whether to log the loss during optimization.
        :param string log_file: filename for logging. Only considered if log=True.
@@ -33,6 +35,13 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=Fal
     else:
         # select all
         active_idxs = torch.tensor([i for i in range(us_pr_flat.shape[1])])
+    # set weight matrix
+    if weights is None:
+        # all 1s
+        weights_flat = torch.ones(us_pr_flat.shape[1])
+    else:
+        # repeat according to dim of u and flatten weights
+        weights_flat = torch.cat([torch.tensor(weights[w]).repeat(us[w].shape[1]) for w in weights.keys()], dim=0) 
     def decoder_wrapper(us_pr_flat):
         return torch.stack([scm.decode_flat(us_pr_flat)[var].squeeze(1) for var in vars_], dim=1)
     for _ in range(num_it):
@@ -43,10 +52,10 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=Fal
         J = torch.diagonal(torch.autograd.functional.jacobian(decoder_wrapper, us_pr_flat), dim1=0, dim2=2).transpose(dim0=0, dim1=2)[:, active_idxs, :]
         # compute linearization
         temp = vals_ast - f0 + torch.bmm(us_pr_flat[:, active_idxs].unsqueeze(1), J).squeeze(1)
-        # solve closed form for linearization 
+        # solve closed form of linearization 
         with torch.no_grad():
-            right = torch.eye(us_pr_flat[:, active_idxs].shape[1]) + lambda_ * torch.bmm(J, J.transpose(1, 2))
-            left = us_pr_flat_init[:, active_idxs].unsqueeze(1) + lambda_ * torch.bmm(temp.unsqueeze(1), torch.transpose(J, 1, 2))
+            right = torch.diag(weights_flat[active_idxs]) + lambda_ * torch.bmm(J, J.transpose(1, 2))
+            left = weights_flat[active_idxs] * us_pr_flat_init[:, active_idxs].unsqueeze(1) + lambda_ * torch.bmm(temp.unsqueeze(1), torch.transpose(J, 1, 2))
             us_pr_flat[:, active_idxs] = torch.bmm(left, torch.inverse(right)).squeeze(1)
         us_pr_flat = us_pr_flat.clone().detach().requires_grad_()
         if log:
