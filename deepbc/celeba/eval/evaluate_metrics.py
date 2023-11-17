@@ -4,7 +4,7 @@ from celeba.baselines import tab_CE
 from celeba.data.datasets import Statistics
 from celeba.baselines import TwoCompSCM, WrongGraphCelebaSCM
 from celeba.data.meta_data import attrs, vars
-from celeba.eval.metrics import identity, causal
+from celeba.eval.metrics import obs, plausible, causal
 import matplotlib.pyplot as plt
 import torch
 
@@ -21,7 +21,7 @@ def main(cont_attr_path="./celeba/data/predictions/preds.pt", sample_size=500):
     # take sample_size data points from data set
     scm_wg = WrongGraphCelebaSCM()
     # losses
-    ids, causes = {method : [] for method in METHODS}, {method : [] for method in METHODS}
+    ids, plauses, causes = {method : [] for method in METHODS}, {method : [] for method in METHODS}, {method : [] for method in METHODS}
     # iterate through data points and generate counterfactuals for each method
     for i in range(sample_size):
         # sample data point
@@ -34,18 +34,21 @@ def main(cont_attr_path="./celeba/data/predictions/preds.pt", sample_size=500):
         # make num_it a bit smaller than default because it takes a bit long
         us_ast_back = backtrack_linearize(scm, vars_=[attr], vals_ast=val_ast, num_it=10, **us)
         xs_ast_back = scm.decode(**us_ast_back)
-        ids["DeepBC"].append(identity(xs, xs_ast_back))
-        causes["DeepBC"].append(causal(xs_ast_back, scm))
+        ids["DeepBC"].append(obs(xs, xs_ast_back))
+        plauses["DeepBC"].append(plausible(xs_ast_back, scm))
+        causes["DeepBC"].append(causal(xs, xs_ast_back, scm))
 
         # tabular CE baseline
         xs_ast_obs = tab_CE(scm, vars_=[attr], vals_ast=val_ast, sparse=False, **us)
-        ids["tabular CE"].append(identity(xs, xs_ast_obs))
-        causes["tabular CE"].append(causal(xs_ast_obs, scm))
+        ids["tabular CE"].append(obs(xs, xs_ast_obs))
+        plauses["tabular CE"].append(plausible(xs_ast_obs, scm))
+        causes["tabular CE"].append(causal(xs, xs_ast_obs, scm))
 
         # interventional counterfactual
         xs_int_ast = scm.decode(**us, repl={attr : val_ast})
-        ids["interventional"].append(identity(xs, xs_int_ast))
-        causes["interventional"].append(causal(xs_int_ast, scm))
+        ids["interventional"].append(obs(xs, xs_int_ast))
+        plauses["interventional"].append(plausible(xs_int_ast, scm))
+        causes["interventional"].append(causal(xs, xs_int_ast, scm))
 
         # DeepBC with non-causal baseline
         nc_scm = nc_scms[attr]
@@ -59,8 +62,9 @@ def main(cont_attr_path="./celeba/data/predictions/preds.pt", sample_size=500):
         # get predictions from classifiers (and standardize)
         attrs_preds = {**{attr_ : stats.standardize(attr_, nc_scms[attr_].models[attr_].classifier(xs_ast_nc["image"])) for attr_ in attrs}, 
                        "image" : xs_ast_nc["image"]}
-        ids["non-causal CE"].append(identity(xs, attrs_preds))
-        causes["non-causal CE"].append(causal(attrs_preds, scm))
+        ids["non-causal CE"].append(obs(xs, attrs_preds))
+        plauses["non-causal CE"].append(plausible(attrs_preds, scm))
+        causes["non-causal CE"].append(causal(xs, attrs_preds, scm))
 
         # sparse DeepBC with wrong graph
         us_wg = scm_wg.encode(**xs)
@@ -69,15 +73,16 @@ def main(cont_attr_path="./celeba/data/predictions/preds.pt", sample_size=500):
         us_ast_wg_ord = backtrack_linearize(scm_wg, vars_=[attr], vals_ast=val_ast, num_it=10, **us_wg)
         xs_ast_wg = scm_wg.decode(**us_ast_wg_ord)
         xs_ast_wg = {key : xs_ast_wg[key] for key in vars}
-        ids["wrong graph"].append(identity(xs, xs_ast_wg))
-        causes["wrong graph"].append(causal(xs_ast_wg, scm))
+        ids["wrong graph"].append(obs(xs, xs_ast_wg))
+        plauses["wrong graph"].append(plausible(xs_ast_wg, scm))
+        causes["wrong graph"].append(causal(xs, xs_ast_wg, scm))
         if i % 10 == 0:
             torch.save(ids, "ids.pt")
-            torch.save(causes, "causes.pt")
+            torch.save(plauses, "plauses.pt")
             print(i)
     # save results
     torch.save(ids, "ids.pt")
-    torch.save(causes, "causes.pt")
+    torch.save(plauses, "plauses.pt")
 
 if __name__ == "__main__":
     main()
