@@ -4,7 +4,7 @@ import torch
 from torch.linalg import pinv
 
 def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=False, n_largest=2, 
-                        weights=None, const_idxs=None, log=False, log_file=None, **us):
+                        weights=None, const_idxs=None, log=False, log_file=None, verbose=False, **us):
     """Backtracking with constraint linearization (recommended). Can be done in a batched fashion.
 
        :param SCM scm: Structural causal model to be used
@@ -19,6 +19,7 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=Fal
        :param list const_idx: The indices of variables to keep constant during optimization (used for sparse DeepBC)
        :param bool log: Whether to log the loss during optimization.
        :param string log_file: filename for logging. Only considered if log=True.
+       :param bool verbose: whether to print backtracking loss at each iteration.
        :param dict us: A dictionary containing the factual exogenous values of the SCM variables
        :return dict us_ast: A dictionary containing the counterfactual exogenous values of the SCM variables
     """
@@ -62,7 +63,8 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=Fal
         us_pr_flat = us_pr_flat.clone().detach().requires_grad_()
         if log:
             losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat_init, dist_fun='l2'))
-        print(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat_init, dist_fun='l2'))
+        if verbose:
+            print(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat_init, dist_fun='l2'))
     if sparse:
         # jumps into a recursion
         return sparsify(scm, vars_, vals_ast, us_pr_flat, n_largest=n_largest, log=log, log_file=log_file, **us)
@@ -84,7 +86,7 @@ def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun='l2'):
     return loss.sum()
 
 def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=30000, lr=1e-3, dist_fun='l2', 
-                       const_idxs=None, log=False, log_file=None, **us):
+                       const_idxs=None, log=False, log_file=None, verbose=False, **us):
     """First-order method (Adam) for solving the backtracking problem (not recommended, can be unstable).
 
        :param SCM scm: Structural causal model to be used
@@ -95,6 +97,7 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=30000, lr=1e-3,
        :param list const_idx: The indices of variables to keep constant during optimization (used for sparse DeepBC)
        :param bool log: Whether to log the loss during optimization.
        :param string log_file: filename for logging. Only considered if log=True.
+       :param bool verbose: whether to print backtracking loss at each iteration.
        :param dict us: A dictionary containing the factual exogenous values of the SCM variables
        :return dict us_ast: A dictionary containing the counterfactual exogenous values of the SCM variables
     """
@@ -121,7 +124,8 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=30000, lr=1e-3,
             us_pr_flat.grad = us_pr_flat.grad * mask 
         optimizer.step()
         optimizer.zero_grad()
-        print(loss.item())
+        if verbose:
+            print(loss.item())
         if log:
             losses.append(loss.item())
     if log:
