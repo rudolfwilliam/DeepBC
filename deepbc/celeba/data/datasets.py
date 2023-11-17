@@ -7,12 +7,30 @@ from celeba.data.meta_data import attrs, vars2int
 import torch
 
 DATA_PATH = "./celeba/data"
+MEANS_PATH = "./celeba/data/predictions/means.pt"
+STDS_PATH = "./celeba/data/predictions/stds.pt"
 
 def load_data():
     transforms = Compose([CenterCrop(150), Resize((128, 128)), ToTensor(), ConvertImageDtype(dtype=torch.float32), Normalize(mean=[0., 0., 0.], std=[1., 1., 1.]),])
     data = CelebA(root=DATA_PATH, split='all', transform=transforms, download=True)
     return data
 
+def load_statistics():
+    means = torch.load(MEANS_PATH)
+    stds = torch.load(STDS_PATH)
+    return means, stds
+
+class Statistics(object):
+    def __init__(self):
+        self.means, self.stds = load_statistics()
+
+    def standardize(self, attr, val):
+        return (val - self.means[attr]) / self.stds[attr]
+    
+    def destandardize(self, attr, val):
+        # loaded data is standardized
+        return val * self.stds[attr] + self.means[attr]
+    
 class CelebaContinuous(Dataset):
     def __init__(self, cont_attr_path="./celeba/data/predictions/preds.pt", transform=None, as_dict=False):
         super().__init__()
@@ -30,6 +48,13 @@ class CelebaContinuous(Dataset):
         if self.as_dict:
             return {**{attr : self.cont_attr[idx][vars2int[attr]].view(1, -1) for attr in attrs}, "image" : self.data[idx][0].unsqueeze(0)}
         return self.data[idx][0], self.cont_attr[idx]
+    
+    def standardize(self, attr, val):
+        return (val - self.means[attr]) / self.stds[attr]
+    
+    def destandardize(self, attr, val):
+        # loaded data is standardized
+        return val * self.stds[attr] + self.means[attr]
 
 # Custom transform to only select attributes
 class SelectAttributesTransform:

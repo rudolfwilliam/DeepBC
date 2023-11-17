@@ -1,8 +1,9 @@
 """Algorithms for solving the deep backtracking optimization problem."""
 
 import torch
+from torch.linalg import pinv
 
-def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=False, n_largest=2, 
+def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=False, n_largest=2, 
                         weights=None, const_idxs=None, log=False, log_file=None, **us):
     """Backtracking with constraint linearization (recommended). Can be done in a batched fashion.
 
@@ -23,7 +24,7 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=Fal
     """
     us_pr = initialize_us_pr(**us)
     # we need to work with flattened us_pr tensor for practical reasons
-    us_pr_flat_init = torch.cat([u for u in us_pr.values()], dim=1).detach()
+    us_pr_flat_init = torch.cat([us[key] for key in scm.graph_structure.keys()], dim=1).detach()
     # optimize over these
     us_pr_flat = us_pr_flat_init.clone().detach().requires_grad_()
     if log:
@@ -41,7 +42,7 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=Fal
         weights_flat = torch.ones(us_pr_flat.shape[1])
     else:
         # repeat according to dim of u and flatten weights
-        weights_flat = torch.cat([torch.tensor(weights[w]).repeat(us[w].shape[1]) for w in weights.keys()], dim=0) 
+        weights_flat = torch.cat([torch.tensor(weights[w]).repeat(us[w].shape[1]) for w in scm.graph_structure.keys()], dim=0) 
     def decoder_wrapper(us_pr_flat):
         return torch.stack([scm.decode_flat(us_pr_flat)[var].squeeze(1) for var in vars_], dim=1)
     for _ in range(num_it):
@@ -54,19 +55,21 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e4, num_it=50, sparse=Fal
         temp = vals_ast - f0 + torch.bmm(us_pr_flat[:, active_idxs].unsqueeze(1), J).squeeze(1)
         # solve closed form of linearization 
         with torch.no_grad():
-            right = torch.diag(weights_flat[active_idxs]) + lambda_ * torch.bmm(J, J.transpose(1, 2))
-            left = weights_flat[active_idxs] * us_pr_flat_init[:, active_idxs].unsqueeze(1) + lambda_ * torch.bmm(temp.unsqueeze(1), torch.transpose(J, 1, 2))
-            us_pr_flat[:, active_idxs] = torch.bmm(left, torch.inverse(right)).squeeze(1)
+            right = (1/lambda_) * torch.diag(weights_flat[active_idxs]) + torch.bmm(J, J.transpose(1, 2))
+            left = (1/lambda_) * weights_flat[active_idxs] * us_pr_flat_init[:, active_idxs].unsqueeze(1) + torch.bmm(temp.unsqueeze(1), torch.transpose(J, 1, 2))
+            # pseudo-inverse is more stable than inverse
+            us_pr_flat[:, active_idxs] = torch.bmm(left, pinv(right)).squeeze(1)
         us_pr_flat = us_pr_flat.clone().detach().requires_grad_()
         if log:
             losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat_init, dist_fun='l2'))
+        print(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat_init, dist_fun='l2'))
     if sparse:
         # jumps into a recursion
         return sparsify(scm, vars_, vals_ast, us_pr_flat, n_largest=n_largest, log=log, log_file=log_file, **us)
     if log:
         # save losses for plotting
         torch.save(torch.tensor(losses), log_file + '.pt')
-    us_ast = unflatten(us_pr_flat.detach(), us_pr)
+    us_ast = unflatten(us_pr_flat.detach(), us_pr, scm)
     return us_ast
 
 def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun='l2'):
@@ -99,10 +102,10 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=30000, lr=1e-3,
     us_pr = initialize_us_pr(**us)
     # we need to work with flattened us tensors for practical reasons
     # keep us_flat fixed
-    us_flat = torch.cat([u for u in us.values()], dim=1).detach()
+    us_flat = torch.cat([us[val] for val in scm.graph_structure.keys()], dim=1).detach()
     us_flat.requires_grad = False
     # these are the variables we want to optimize
-    us_pr_flat = torch.cat([u for u in us_pr.values()], dim=1).detach().requires_grad_() 
+    us_pr_flat = torch.cat([us[val] for val in scm.graph_structure.keys()], dim=1).detach().requires_grad_() 
     if log:
         losses = []
         losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat, dist_fun='l2'))
@@ -118,12 +121,13 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=30000, lr=1e-3,
             us_pr_flat.grad = us_pr_flat.grad * mask 
         optimizer.step()
         optimizer.zero_grad()
+        print(loss.item())
         if log:
             losses.append(loss.item())
     if log:
         # save losses for plotting
         torch.save(torch.tensor(losses), log_file + '.pt')
-    us_ast = unflatten(us_pr_flat.detach(), us_pr)
+    us_ast = unflatten(us_pr_flat.detach(), us_pr, scm)
     return us_ast
 
 def initialize_us_pr(**us):
@@ -132,19 +136,19 @@ def initialize_us_pr(**us):
         us_pr[key] = torch.clone(u).requires_grad_()
     return us_pr
 
-def unflatten(us_pr_flat, us_pr):
+def unflatten(us_pr_flat, us_pr, scm):
     """Convert flattened tensor back to dict (and detach)."""
     us_pr_new = {}
     prev = 0
-    for key, u in us_pr.items():
-        us_pr_new[key] = us_pr_flat[:, prev:(prev + u.shape[1])]
-        prev += u.shape[1]
+    for key in scm.graph_structure.keys():
+        us_pr_new[key] = us_pr_flat[:, prev:(prev + us_pr[key].shape[1])]
+        prev += us_pr[key].shape[1]
     return us_pr_new
 
 def sparsify(scm, vars_, vals_ast, us_pr_flat, lambda_=10000, num_it=30, n_largest=2, 
              linearize=True, log=False, log_file=None, **us):
     # only select components of us_pr_flat that have a large deviation from us_flat
-    us_flat = torch.cat([u for u in us.values()], dim=1).detach()
+    us_flat = torch.cat([us[key] for key in scm.graph_structure.keys()], dim=1).detach()
     _, top_idxs = torch.topk(torch.abs(us_pr_flat - us_flat), n_largest)
     const_idxs = torch.tensor([i for i in range(us_pr_flat.shape[1]) if i not in top_idxs])
     if linearize:

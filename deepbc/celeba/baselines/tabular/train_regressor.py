@@ -5,7 +5,7 @@ import os
 import torch.nn as nn
 import pytorch_lightning as pl
 from data.datasets import SelectAttributesTransform
-from celeba.data.meta_data import attrs, graph_structure
+from celeba.data.meta_data import attrs
 from celeba.data.datasets import CelebaContinuous
 from utils import generate_checkpoint_callback, generate_early_stopping_callback
 
@@ -52,7 +52,11 @@ class Regressor(pl.LightningModule):
         return loss
 
     def configure_optimizers(self):
-        return torch.optim.Adam(self.parameters(), lr=0.001)
+        return torch.optim.Adam(self.parameters(), lr=1e-3)
+    
+    def on_train_epoch_end(self):
+        print('train loss: ', self.trainer.callback_metrics['train_loss'].item())
+        print('val loss: ', self.trainer.callback_metrics['val_loss'].item())
         
 def main(attr="beard", patience=2, max_epochs=100, train_val_split=0.8, batch_size_train=128, ckpt_path="./celeba/baselines/tabular/trained_models/checkpoints/"):
     """Train classifier on observed variables."""
@@ -72,5 +76,5 @@ def main(attr="beard", patience=2, max_epochs=100, train_val_split=0.8, batch_si
     print("done.")
 
 if __name__ == "__main__":
-    main(attr="gender")
+    main(attr="age")
     
