@@ -1,6 +1,6 @@
 from celeba.scm.model import CelebaSCM
 from optim import backtrack_linearize
-from celeba.baselines import sparse_CE, WrongGraphCelebaSCM
+from celeba.baselines import tab_CE, WrongGraphCelebaSCM
 import matplotlib.pyplot as plt
 import torch
 
@@ -23,7 +23,7 @@ def main():
     xs_ast_sparse = scm.decode(**us_ast)
     # DeepBC with observational sparse CE baseline
     us_cp = us.copy()
-    xs_ast_obs = sparse_CE(scm, vars_=[attr], vals_ast=val_ast, **us_cp)
+    xs_ast_obs = tab_CE(scm, vars_=[attr], vals_ast=val_ast, linearization=True, **us_cp)
 
     # interventional counterfactual
     xs_int = xs.copy()
@@ -65,3 +65,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

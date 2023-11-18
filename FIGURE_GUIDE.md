@@ -12,21 +12,23 @@ Fig. 4 (c): `python -m morphomnist.visualizations.tast_to_iast`
 
 ## CelebA
 
-Fig. 5 (b): `python -m celeba.visualizations.antecedent_beard_OOD`
-
-Fig. 5 (c): `python -m celeba.visualizations.antecedent_beard_sparse`
-
-Fig. 5 (d): `python -m celeba.visualizations.antecedent_bald`
-
-Fig. 5 (e): `python -m celeba.visualizations.multi_antecedents`
+Fig. 5: `python -m celeba.visualizations.antecedent_beard_sparse`
 
 ## Supplementary
 
-Fig. 6 (b): `python -m celeba.visualizations.multi_antecedents`
+Fig. 6:  `python -m morphomnist.visualizations.lin_vs_GD`
 
-Fig. 6 (c): `python -m celeba.visualizations.antecedent_beard_suppl`
+Fig. 7: `python -m morphomnist.visualizations.iast_to_tast` (run three times with the reported thickness weights)
 
-Fig. 6 (d): `python -m celeba.visualizations.comp_nc_suppl`
+Fig. 8 (a): `python -m celeba.visualizations.antecedent_beard_OOD`
+
+Fig. 8 (b): `python -m celeba.visualizations.multi_antecedents`
+
+Fig. 9 (c): `python -m celeba.visualizations.antecedent_beard_suppl`
+
+Fig. 9 (d): `python -m celeba.visualizations.comp_nc_suppl`
+
+Fig. 9 (e): `python -m celeba.visualizations.antecedent_beard_sparse`
 
 ## Other figures
 

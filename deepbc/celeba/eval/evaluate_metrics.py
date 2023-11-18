@@ -8,11 +8,9 @@ from celeba.eval.metrics import obs, plausible, causal
 import matplotlib.pyplot as plt
 import torch
 
-#METHODS = ["DeepBC", "interventional", "tabular CE", "non-causal CE", "wrong graph"]
-METHODS = ["DeepBC", "tabular CE"]
-SAVE=False
+METHODS = ["DeepBC", "interventional", "tabular CE", "non-causal CE", "wrong graph"]
 
-def main(sample_size=500):
+def main(sample_size=500, save=True):
     torch.manual_seed(0)
     # load true SCM
     scm = CelebaSCM()
@@ -23,7 +21,7 @@ def main(sample_size=500):
     # take sample_size data points from data set
     scm_wg = WrongGraphCelebaSCM()
     # losses
-    ids, plauses, causes = {method : [] for method in METHODS}, {method : [] for method in METHODS}, {method : [] for method in METHODS}
+    obs, plauses, causes = {method : [] for method in METHODS}, {method : [] for method in METHODS}, {method : [] for method in METHODS}
     # iterate through data points and generate counterfactuals for each method
     for i in range(sample_size):
         # sample data point
@@ -36,19 +34,19 @@ def main(sample_size=500):
             # make num_it a bit smaller than default because it takes a bit long
             us_ast = backtrack_linearize(scm, vars_=[attr], vals_ast=val_ast, num_it=10, **us)
             xs_ast_back = scm.decode(**us_ast)
-            ids["DeepBC"].append(obs(xs, xs_ast_back))
+            obs["DeepBC"].append(obs(xs, xs_ast_back))
             plauses["DeepBC"].append(plausible(xs_ast_back, scm))
             causes["DeepBC"].append(causal(xs, xs_ast_back, scm))
         if "tabular CE" in METHODS:
             # tabular CE baseline
             xs_ast_obs = tab_CE(scm, vars_=[attr], vals_ast=val_ast, sparse=False, verbose=False, **us)
-            ids["tabular CE"].append(obs(xs, xs_ast_obs))
+            obs["tabular CE"].append(obs(xs, xs_ast_obs))
             plauses["tabular CE"].append(plausible(xs_ast_obs, scm))
             causes["tabular CE"].append(causal(xs, xs_ast_obs, scm))
         if "interventional" in METHODS:
             # interventional counterfactual
             xs_int_ast = scm.decode(**us, repl={attr : val_ast})
-            ids["interventional"].append(obs(xs, xs_int_ast))
+            obs["interventional"].append(obs(xs, xs_int_ast))
             plauses["interventional"].append(plausible(xs_int_ast, scm))
             causes["interventional"].append(causal(xs, xs_int_ast, scm))
         if "non-causal CE" in METHODS:
@@ -64,7 +62,7 @@ def main(sample_size=500):
             # get predictions from classifiers (and standardize)
             attrs_preds = {**{attr_ : stats.standardize(attr_, nc_scms[attr_].models[attr_].classifier(xs_ast_nc["image"])) for attr_ in attrs}, 
                             "image" : xs_ast_nc["image"]}
-            ids["non-causal CE"].append(obs(xs, attrs_preds))
+            obs["non-causal CE"].append(obs(xs, attrs_preds))
             plauses["non-causal CE"].append(plausible(attrs_preds, scm))
             causes["non-causal CE"].append(causal(xs, attrs_preds, scm))
         if "wrong graph" in METHODS:
@@ -75,20 +73,20 @@ def main(sample_size=500):
             us_ast_wg_ord = backtrack_linearize(scm_wg, vars_=[attr], vals_ast=val_ast, num_it=10, **us_wg)
             xs_ast_wg = scm_wg.decode(**us_ast_wg_ord)
             xs_ast_wg = {key : xs_ast_wg[key] for key in vars}
-            ids["wrong graph"].append(obs(xs, xs_ast_wg))
+            obs["wrong graph"].append(obs(xs, xs_ast_wg))
             plauses["wrong graph"].append(plausible(xs_ast_wg, scm))
             causes["wrong graph"].append(causal(xs, xs_ast_wg, scm))
         if i % 10 == 0:
             print(i)
-            if SAVE:
-                torch.save(ids, "ids.pt")
+            if save:
+                torch.save(obs, "obs.pt")
                 torch.save(plauses, "plauses.pt")
                 torch.save(causes, "causes.pt")
     # save results
-    if SAVE:
-        torch.save(ids, "ids.pt")
+    if save:
+        torch.save(obs, "obs.pt")
         torch.save(plauses, "plauses.pt")
         torch.save(causes, "causes.pt")
 
 if __name__ == "__main__":
-    main()
+    main(sample_size=500, save=True)

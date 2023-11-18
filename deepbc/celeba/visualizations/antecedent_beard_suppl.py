@@ -1,6 +1,6 @@
 from celeba.scm.model import CelebaSCM
 from optim import backtrack_linearize
-from celeba.baselines import sparse_CE
+from celeba.baselines import tab_CE
 import matplotlib.pyplot as plt
 import torch
 
@@ -17,7 +17,7 @@ def main():
     us_ast = backtrack_linearize(scm, vars_=[attr], vals_ast=val_ast, sparse=True, n_largest=2, **us)
     xs_ast_sparse = scm.decode(**us_ast)
     # DeepBC with observational sparse CE baseline
-    xs_ast_obs = sparse_CE(scm, vars_=[attr], vals_ast=val_ast, **us)
+    xs_ast_obs = tab_CE(scm, vars_=[attr], vals_ast=val_ast, **us)
 
     # interventional counterfactual
     xs_int = xs.copy()
@@ -38,9 +38,8 @@ def main():
     plt.title("age: " + str(round(xs_ast_obs["age"].item(), 2)) + " gender: " + str(round(xs_ast_obs["gender"].item(), 2)) + 
               " beard: " + str(round(xs_ast_obs["beard"].item(), 2)) + " bald: " + str(round(xs_ast_obs["bald"].item(), 2)))
 
-    plt.savefig("antecedent_beard_suppl.pdf")
-    
-    #plt.show()
+    #plt.savefig("antecedent_beard_suppl.pdf")
+    plt.show()
 
 if __name__ == "__main__":
     main()

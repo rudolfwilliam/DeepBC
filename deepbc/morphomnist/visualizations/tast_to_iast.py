@@ -2,7 +2,7 @@
 
 import matplotlib.pyplot as plt
 import torch
-import tikzplotlib
+#import tikzplotlib
 import numpy as np
 import seaborn as sns
 from morphomnist.data.datasets import MorphoMNISTLike
@@ -39,8 +39,8 @@ def main(data_dir, weights={"thickness" : 1., "intensity" : 1., "image" : 1.}, i
     plt.xlim(-3, 3)  # Set x-axis range from -3 to 3
     plt.ylim(-3, 4)
     plt.gca().set_aspect('equal')
-    #plt.show()
-    tikzplotlib.save("./morphomnist/visualizations/tex_files/visualize_tast_to_iast_w8.tex")
+    plt.show()
+    #tikzplotlib.save("./morphomnist/visualizations/tex_files/visualize_tast_to_iast_w8.tex")
 
 if __name__ == "__main__":
-    main("./morphomnist/data", weights={"thickness" : 8., "intensity" : 1., "image" : 1.}, idx=5)
+    main("./morphomnist/data", weights={"thickness" : 1., "intensity" : 1., "image" : 1.}, idx=5)
