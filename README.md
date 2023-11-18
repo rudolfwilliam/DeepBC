@@ -46,7 +46,8 @@ We utilize a separate directory for each of the data sets `morphomnist` and `cel
 │      │      │    │     └── ... 
 │      │      │    └── ...
 │      │      ├── baselines                   # Baseline models
-│      │      └── visualizations              # Scripts that reproduce figures from the paper
+│      │      ├── visualizations              # Scripts that reproduce figures from the paper
+|      |      └── eval                        # Scripts that evaluate different methods
 │      ├── morphomnist
 │      └── ...
 └── ...    
@@ -62,6 +63,14 @@ You can reproduce all figures from the paper by running the corresponding module
 
 ```
 python -m morphomnist.visualizations.tast_to_iast
+```
+
+## Tables
+
+You can reproduce the table from the paper by running the corresponding modules as described in `TABLE_GUIDE.md`. To evaluate the different metods (to obtain the scores), run
+
+```
+python -m celeba.eval.evaluate_metrics
 ```
 
 ## Structural Causal Model (SCM) Training
