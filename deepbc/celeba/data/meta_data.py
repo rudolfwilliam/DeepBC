@@ -10,6 +10,7 @@ attr2int = {'age' : 39, 'gender' : 20, 'bald' : 4, 'beard' : 24}
 vars2int = {'age' : 0, 'gender' : 1, 'bald' : 2, 'beard' : 3, 'image' : 4}
 
 # see https://arxiv.org/pdf/2004.08697.pdf (group 1)
+# order of the keys is important!
 graph_structure = {'age'    : [],
                    'gender' : [],
                    'bald'   : ['age', 'gender'],

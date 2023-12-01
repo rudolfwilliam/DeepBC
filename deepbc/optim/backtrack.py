@@ -23,9 +23,8 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=Fal
        :param dict us: A dictionary containing the factual exogenous values of the SCM variables
        :return dict us_ast: A dictionary containing the counterfactual exogenous values of the SCM variables
     """
-    us_pr = initialize_us_pr(**us)
     # we need to work with flattened us_pr tensor for practical reasons
-    us_pr_flat_init = torch.cat([us[key] for key in scm.graph_structure.keys()], dim=1).detach()
+    us_pr_flat_init = torch.cat([us[key] for key in scm.graph_structure.keys()], dim=1).clone().detach()
     # optimize over these
     us_pr_flat = us_pr_flat_init.clone().detach().requires_grad_()
     if log:
@@ -71,7 +70,7 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=Fal
     if log:
         # save losses for plotting
         torch.save(torch.tensor(losses), log_file + '.pt')
-    us_ast = unflatten(us_pr_flat.detach(), us_pr, scm)
+    us_ast = unflatten(us_pr_flat.detach(), us, scm)
     return us_ast
 
 def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun='l2'):
@@ -101,14 +100,11 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=30000, lr=1e-3,
        :param dict us: A dictionary containing the factual exogenous values of the SCM variables
        :return dict us_ast: A dictionary containing the counterfactual exogenous values of the SCM variables
     """
-    # initialize "us prime" 
-    us_pr = initialize_us_pr(**us)
     # we need to work with flattened us tensors for practical reasons
     # keep us_flat fixed
-    us_flat = torch.cat([us[val] for val in scm.graph_structure.keys()], dim=1).detach()
-    us_flat.requires_grad = False
+    us_flat = torch.cat([us[val] for val in scm.graph_structure.keys()], dim=1).clone().detach()
     # these are the variables we want to optimize
-    us_pr_flat = torch.cat([us[val] for val in scm.graph_structure.keys()], dim=1).detach().requires_grad_() 
+    us_pr_flat = torch.cat([us[val] for val in scm.graph_structure.keys()], dim=1).clone().detach().requires_grad_() 
     if log:
         losses = []
         losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat, dist_fun='l2'))
@@ -131,13 +127,13 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=30000, lr=1e-3,
     if log:
         # save losses for plotting
         torch.save(torch.tensor(losses), log_file + '.pt')
-    us_ast = unflatten(us_pr_flat.detach(), us_pr, scm)
+    us_ast = unflatten(us_pr_flat, us, scm)
     return us_ast
 
 def initialize_us_pr(**us):
     us_pr = {}
     for key, u in us.items():
-        us_pr[key] = torch.clone(u).requires_grad_()
+        us_pr[key] = u.detach().requires_grad_()
     return us_pr
 
 def unflatten(us_pr_flat, us_pr, scm):
@@ -145,14 +141,14 @@ def unflatten(us_pr_flat, us_pr, scm):
     us_pr_new = {}
     prev = 0
     for key in scm.graph_structure.keys():
-        us_pr_new[key] = us_pr_flat[:, prev:(prev + us_pr[key].shape[1])]
+        us_pr_new[key] = us_pr_flat[:, prev:(prev + us_pr[key].shape[1])].clone().detach()
         prev += us_pr[key].shape[1]
     return us_pr_new
 
 def sparsify(scm, vars_, vals_ast, us_pr_flat, lambda_=10000, num_it=30, n_largest=2, 
              linearize=True, log=False, log_file=None, **us):
     # only select components of us_pr_flat that have a large deviation from us_flat
-    us_flat = torch.cat([us[key] for key in scm.graph_structure.keys()], dim=1).detach()
+    us_flat = torch.cat([us[key] for key in scm.graph_structure.keys()], dim=1).clone().detach()
     _, top_idxs = torch.topk(torch.abs(us_pr_flat - us_flat), n_largest)
     const_idxs = torch.tensor([i for i in range(us_pr_flat.shape[1]) if i not in top_idxs])
     if linearize:
