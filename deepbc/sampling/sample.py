@@ -28,4 +28,5 @@ def langevin_mc(scm, vars_, vals_ast, lambda_init=1e3, num_it_init=30, lambda_sa
                 us_pr_flat -= step_size * us_pr_flat.grad + noise
             us_pr_flat.grad.zero_()
         samples.append(unflatten(us_pr_flat.detach(), us, scm))
+        us_pr_flat = torch.cat([us_ast_init[val] for val in scm.graph_structure.keys()], dim=1).detach().requires_grad_()
     return samples
