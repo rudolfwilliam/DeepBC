@@ -12,3 +12,4 @@ class StructuralEquation(nn.Module):
 
     def decode(self):
         raise NotImplementedError
+        

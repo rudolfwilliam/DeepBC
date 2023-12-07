@@ -72,3 +72,4 @@ class SCM(nn.Module):
             us[var] = samp
         xs = self.decode(**us)
         return xs, us
+        

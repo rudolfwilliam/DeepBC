@@ -3,7 +3,7 @@
 from torch.utils.data import Dataset
 from torchvision.datasets import CelebA
 from torchvision.transforms import Resize, ToTensor, Normalize, CenterCrop, Compose, ConvertImageDtype
-from celeba.data.meta_data import attrs, vars2int
+from celeba.data.meta_data import attrs, vars2int, attr2int
 import torch
 
 DATA_PATH = "./celeba/data"
@@ -30,6 +30,24 @@ class Statistics(object):
     def destandardize(self, attr, val):
         # loaded data is standardized
         return val * self.stds[attr] + self.means[attr]
+
+class CelebaDiscrete(Dataset):
+    def __init__(self, transform=None, as_dict=False):
+        super().__init__()
+        self.transform = transform
+        self.as_dict = as_dict
+        self.data = load_data()
+        self.attr = torch.stack([torch.stack([self.data.attr[idx][attr2int[attr]] for attr in attr2int.keys()], dim=0) for idx in range(len(self.data.attr))])
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        if self.transform:
+            return self.transform(self.data[idx][0], self.attr[idx])
+        if self.as_dict:
+            return {**{attr : self.attr[idx][vars2int[attr]].view(1, -1) for attr in attrs}, "image" : self.data[idx][0].unsqueeze(0)}
+        return self.data[idx][0], self.attr[idx]
     
 class CelebaContinuous(Dataset):
     def __init__(self, cont_attr_path="./celeba/data/predictions/preds.pt", transform=None, as_dict=False):

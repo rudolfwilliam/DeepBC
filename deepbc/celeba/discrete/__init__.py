@@ -1,1 +1,1 @@
-from celeba.discrete.discrete_celeba import DiscreteCelebA
+from celeba.data.datasets import CelebaDiscrete
