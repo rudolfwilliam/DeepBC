@@ -21,6 +21,7 @@ def main():
     us_cp = us.copy()
     us_ast = backtrack_linearize(scm, vars_=[attr], vals_ast=val_ast, sparse=True, n_largest=2, **us_cp)
     xs_ast_sparse = scm.decode(**us_ast)
+    
     # DeepBC with observational sparse CE baseline
     us_cp = us.copy()
     xs_ast_obs = tab_CE(scm, vars_=[attr], vals_ast=val_ast, linearization=True, **us_cp)
