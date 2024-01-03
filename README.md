@@ -9,7 +9,9 @@ Repository for the paper *Deep Backtracking Counterfactuals for Causally Complia
 ***
 
 ## General
-To run our code, first copy or clone this repository. Then, create a conda environment (assuming that you would like to call it `deepbc`):
+To run our code, first make sure to have [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) and [git large file storage](https://git-lfs.com/) installed.
+
+Then, copy or clone this repository. Create a conda environment (assuming that you would like to call it `deepbc`):
 
 ```
 conda env create -n deepbc -f environment.yaml
