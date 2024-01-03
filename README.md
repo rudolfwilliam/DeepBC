@@ -33,7 +33,8 @@ We utilize a separate directory for each of the data sets `morphomnist` and `cel
 .
 ├── FIGURE_GUIDE.md                           # Guide for reproducing figures
 ├── deepbc
-│      ├── optim                              # DeepBC optimization algorithms
+│      ├── optim                              # Mode DeepBC optimization algorithms
+│      ├── sampling                           # Stochastic DeepBC via Langevin MC sampling
 │      ├── data                               # General data functionality
 │      ├── scm                                # General structural causal model classes
 │      ├── celeba
