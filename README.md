@@ -12,13 +12,7 @@ Repository for the paper *Deep Backtracking Counterfactuals for Causally Complia
 To run our code, first copy or clone this repository. Then, create a conda environment (assuming that you would like to call it `deepbc`):
 
 ```
-conda create --name deepbc python=3.11.3
-```
-
-After navigating into the root folder of this repository using your terminal, install all necessary packages from the `requirements.txt` as follows (make sure your new conda environment is activated before you run this command):
-
-```
-conda install --file requirements.txt
+conda env create -n deepbc -f environment.yaml
 ```
 
 Our code runs on [PyTorch](https://pytorch.org/), [PyTorch Lightning](https://lightning.ai/docs/pytorch/latest/) and [normflows](https://github.com/VincentStimper/normalizing-flows).
