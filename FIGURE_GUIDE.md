@@ -2,7 +2,7 @@ The figures of the paper can be reproduced via the following commands (assuming 
 
 ## Morpho-MNIST
 
-Fig. 3: `python -m morphomnist.imgs_intensity`
+Fig. 3: `python -m morphomnist.visualizations.imgs_intensity`
 
 Fig. 4 (a): `python -m morphomnist.visualizations.uiast_to_utast`
 
