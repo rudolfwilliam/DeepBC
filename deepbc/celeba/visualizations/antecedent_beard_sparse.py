@@ -9,7 +9,7 @@ def main():
     attr = "beard"
     # generate old woman 
     xs, us = scm.sample(std=0)
-    val_ast = torch.tensor([[-3]], dtype=torch.float32)
+    val_ast = torch.tensor([[-2.5]], dtype=torch.float32)
 
     ########## sparse methods ##########
 
