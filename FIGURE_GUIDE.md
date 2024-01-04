@@ -1,5 +1,7 @@
 The figures of the paper can be reproduced via the following commands (assuming you working directory is `deepbc` and you have followed the instructions of the `README.md`):
 
+Minor variations in results may arise from hardware disparities. It is anticipated that these discrepancies will remain negligible[^1].
+
 ## Morpho-MNIST
 
 Fig. 3: `python -m morphomnist.visualizations.imgs_intensity`
@@ -33,3 +35,5 @@ Fig. 9 (e): `python -m celeba.visualizations.antecedent_beard_sparse`
 ## Other figures
 
 *All the figures from the paper that are not listed here were created manually.*
+
+[^1]: Our experiments involved testing on various hardware environments.

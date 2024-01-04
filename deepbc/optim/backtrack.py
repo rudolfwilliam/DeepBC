@@ -1,4 +1,4 @@
-"""Algorithms for solving the deep backtracking optimization problem."""
+"""Algorithms for solving the mode deep backtracking optimization problem."""
 
 import torch
 from torch.linalg import pinv
@@ -128,7 +128,7 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=300, sparse=Fal
         if log:
             losses.append(loss.item())
     if sparse:
-        # jumps into a recursion
+        # jump into a recursion
         return sparsify(scm, vars_, vals_ast, us_pr_flat, n_largest=n_largest, log=log, linearize=False, log_file=log_file, **us)
     if log:
         # save losses for plotting
