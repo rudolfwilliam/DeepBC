@@ -1,1 +1,0 @@
-from scm.modules.discrete.IGR import IGR

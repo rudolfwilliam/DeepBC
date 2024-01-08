@@ -9,7 +9,7 @@ def main():
     scm = CelebaSCM()
     xs, us = scm.sample(std=0.2)
     us_cp = us.copy()
-    val_ast = torch.tensor([[4]], dtype=torch.float32)
+    val_ast = 4. 
     us_ast = backtrack_linearize(scm, vars_=[attr], vals_ast=val_ast, sparse=False, **us_cp) 
     xs_ast = scm.decode(**us_ast)
     us_cp = us.copy()

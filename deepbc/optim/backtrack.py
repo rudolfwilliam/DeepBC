@@ -2,6 +2,7 @@
 
 import torch
 from torch.linalg import pinv
+from utils import convert_vals_ast
 
 def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=False, n_largest=2, 
                         weights=None, const_idxs=None, log=False, log_file=None, verbose=False, eps=0, **us):
@@ -24,6 +25,7 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=Fal
        :param dict us: A dictionary containing the factual exogenous values of the SCM variables
        :return dict us_ast: A dictionary containing the counterfactual exogenous values of the SCM variables
     """
+    vals_ast = convert_vals_ast(vals_ast)
     # we need to work with flattened us_pr tensor for practical reasons
     us_pr_flat_init = torch.cat([us[key] for key in scm.graph_structure.keys()], dim=1).clone().detach()
     # optimize over these
@@ -74,11 +76,13 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=Fal
     us_ast = unflatten(us_pr_flat.detach(), us, scm)
     return us_ast
 
-def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun='l2'):
+def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, weights_flat=None, dist_fun='l2'):
     """Compute the loss for the backtracking problem, required for gradient based optimization. 
        Can be done in a batched fashion, but not recommended due to highly variable convergence time and sensitivity for lambda_."""
+    if weights_flat is None:
+        weights_flat = torch.ones(us_pr_flat.shape[1])
     if dist_fun == 'l2':
-        dist = torch.sum((us_pr_flat - us_flat)**2, dim=1)
+        dist = torch.sum(weights_flat*(us_pr_flat - us_flat)**2, dim=1)
     elif dist_fun == 'l1':
         dist = torch.sum(torch.abs(us_pr_flat - us_flat), dim=1)
     constr = torch.sum((torch.stack([scm.decode_flat(us_pr_flat)[var].squeeze(1) for var in vars_], dim=1) - vals_ast)**2, dim=1) * lambda_
@@ -103,6 +107,7 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=300, sparse=Fal
        :param dict us: A dictionary containing the factual exogenous values of the SCM variables
        :return dict us_ast: A dictionary containing the counterfactual exogenous values of the SCM variables
     """
+    vals_ast = convert_vals_ast(vals_ast)
     # we need to work with flattened us tensors for practical reasons
     # keep us_flat fixed
     us_flat = torch.cat([us[val] for val in scm.graph_structure.keys()], dim=1).clone().detach()

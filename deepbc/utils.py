@@ -2,6 +2,7 @@
 
 from pytorch_lightning.callbacks import ModelCheckpoint, EarlyStopping
 from json import load
+import torch
 import argparse
 
 def freeze_model(model):
@@ -30,6 +31,16 @@ def get_config(config_dir, default):
     args = argParser.parse_args()
     config = load(open(config_dir + args.name + ".json", "r"))
     return config
+
+def convert_vals_ast(vals_ast):
+    if type(vals_ast) != torch.Tensor:
+        if type(vals_ast) == int or type(vals_ast) == float:
+            vals_ast = torch.tensor([[vals_ast]], dtype=torch.float32)
+        elif type(vals_ast) == list:
+            vals_ast = torch.tensor(vals_ast, dtype=torch.float32)
+    if len(vals_ast.shape) == 1:
+            vals_ast = vals_ast.view(-1, 1)
+    return vals_ast
     
 def override(f):
     return f
