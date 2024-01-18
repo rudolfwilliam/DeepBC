@@ -36,3 +36,6 @@ class GCondFlow(pl.LightningModule, StructuralEquation):
         optimizer = Adam(self.parameters(), lr=self.lr)
         return optimizer
     
+    def inverse_and_log_det(self, x, x_pa):
+        return self.flow.inverse_and_log_det(x, x_pa)
+    

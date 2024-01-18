@@ -55,7 +55,7 @@ class DummySCM(SCM):
         for param in self.models[self.attr].regressor.parameters():
             param.requires_grad = False
 
-def tab_CE(scm, vars_, vals_ast, ckpt_path="./celeba/baselines/tabular/trained_models/checkpoints/", linearization=False, sparse=True, verbose=False, **us):
+def tab_CE(scm, vars_, vals_ast, ckpt_path="./celeba/baselines/tabular/trained_models/checkpoints/", linearization=False, sparse=True, n_largest=1, lr=1e-2, num_it=500, lambda_=1e3, verbose=False, **us):
     # xs and us are identical
     dummy_graph_structure = {**{attr_ : [] for attr_ in attrs if attr_ != vars_[0]},
                                 vars_[0] : [attr_ for attr_ in attrs if attr_ != vars_[0]]}
@@ -67,9 +67,9 @@ def tab_CE(scm, vars_, vals_ast, ckpt_path="./celeba/baselines/tabular/trained_m
     file_name = next((file for file in os.listdir(ckpt_path) if file.startswith(vars_[0])), None)
     scm_attr = DummySCM(attr=vars_[0], graph_structure=dummy_graph_structure, regressor_path=ckpt_path + file_name)
     if linearization:
-        xs_ast = backtrack_linearize(scm=scm_attr, vals_ast=vals_ast, vars_=vars_, sparse=sparse, num_it=100, lambda_=1e3, verbose=verbose, **xs_copy)
+        xs_ast = backtrack_linearize(scm=scm_attr, vals_ast=vals_ast, vars_=vars_, sparse=sparse, n_largest=n_largest, num_it=num_it, lambda_=lambda_, verbose=verbose, **xs_copy)
     else:
-        xs_ast = backtrack_gradient(scm=scm_attr, vals_ast=vals_ast, vars_=vars_, num_it=500, lr=1e-2, lambda_=1e3, verbose=verbose, **xs_copy)
+        xs_ast = backtrack_gradient(scm=scm_attr, vals_ast=vals_ast, vars_=vars_, sparse=sparse, n_largest=n_largest, num_it=num_it, lr=lr, lambda_=lambda_, verbose=verbose, **xs_copy)
     xs_ast[vars_[0]] = scm_attr.models[vars_[0]].regressor(torch.cat([xs_ast[pa] for pa in scm_attr.graph_structure[vars_[0]]], dim=1))
     img_ast = scm.models["image"].decode(us["image"], torch.cat([xs_ast[pa] for pa in scm.graph_structure["image"]], dim=1))
     return {"image" : img_ast, **xs_ast}

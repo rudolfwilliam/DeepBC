@@ -7,7 +7,7 @@ import torch
 import numpy as np
 import seaborn as sns
 from morphomnist.data.datasets import MorphoMNISTLike
-from optim import backtrack_linearize
+from optim import backtrack_linearize, backtrack_gradient
 from morphomnist.scm import MmnistSCM
 from morphomnist.data.meta_data import attrs
 
@@ -27,7 +27,7 @@ def main(data_dir, idx=5):
     us = scm.encode(image = img.view(1, 1, 28, 28).repeat(rg.shape[0], 1, 1, 1), 
                     intensity = i.view(-1, 1).repeat(rg.shape[0], 1), thickness = t.view(-1, 1).repeat(rg.shape[0], 1))
     # backtrack entire range of thicknesses at once
-    us_ast = backtrack_linearize(scm, vars_=['intensity'], vals_ast=rg, **us)
+    us_ast = backtrack_gradient(scm, vars_=['intensity'], vals_ast=rg, dist_fun="l4", verbose=True, lr=0.01, num_it=10000, **us)
     # plot distribution of latent space in background (standard multivariate normal)
     latents = np.random.multivariate_normal(mean=[0, 0], cov=[[1, 0], [0, 1]], size=10000)
     # contour plot of latent space

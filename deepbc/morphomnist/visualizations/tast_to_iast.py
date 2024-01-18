@@ -6,7 +6,7 @@ import torch
 import numpy as np
 import seaborn as sns
 from morphomnist.data.datasets import MorphoMNISTLike
-from optim import backtrack_linearize
+from optim import backtrack_linearize, backtrack_gradient
 from morphomnist.scm.model import MmnistSCM
 from morphomnist.data.meta_data import attrs
 
@@ -25,7 +25,7 @@ def main(data_dir, weights={"thickness" : 1., "intensity" : 1., "image" : 1.}, i
     t = attrs_[attrs.index('thickness')]
     us = scm.encode(image=img.view(1, 1, 28, 28).repeat(rg.shape[0], 1, 1, 1), intensity=i.view(-1, 1).repeat(rg.shape[0], 1), thickness=t.view(-1, 1).repeat(rg.shape[0], 1))
     # backtrack entire range of thicknesses at once
-    us_ast = backtrack_linearize(scm, vars_=['intensity'], weights=weights, vals_ast=rg, **us)
+    us_ast = backtrack_gradient(scm, vars_=['intensity'], weights=weights, dist_fun="l4", verbose=True, num_it=5000, lr=0.01, vals_ast=rg, **us)
     xs_ast = scm.decode(**us_ast)
     
     plt.figure(figsize=(5, 5))
@@ -34,7 +34,7 @@ def main(data_dir, weights={"thickness" : 1., "intensity" : 1., "image" : 1.}, i
     # plt.scatter(train_set.metrics['intensity'], train_set.metrics['thickness'], c='r')
     plt.scatter(xs_ast['intensity'], xs_ast['thickness'], c=list(plt.rcParams['axes.prop_cycle'])[3]['color'], s=5)
     # this is what interventional counterfactuals do
-    #plt.scatter(rg, torch.full((len(rg),), t), c=list(plt.rcParams['axes.prop_cycle'])[5]['color'], s=5)
+    plt.scatter(rg, torch.full((len(rg),), t), c=list(plt.rcParams['axes.prop_cycle'])[5]['color'], s=5)
     plt.plot(i, t, 'o', color=list(plt.rcParams['axes.prop_cycle'])[0]['color'])
     plt.xlim(-3, 3)  # Set x-axis range from -3 to 3
     plt.ylim(-3, 4)

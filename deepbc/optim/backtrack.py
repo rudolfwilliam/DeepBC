@@ -76,15 +76,12 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=Fal
     us_ast = unflatten(us_pr_flat.detach(), us, scm)
     return us_ast
 
-def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, weights_flat=None, dist_fun='l2'):
+def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun='l2', weights_flat=None):
     """Compute the loss for the backtracking problem, required for gradient based optimization. 
        Can be done in a batched fashion, but not recommended due to highly variable convergence time and sensitivity for lambda_."""
     if weights_flat is None:
         weights_flat = torch.ones(us_pr_flat.shape[1])
-    if dist_fun == 'l2':
-        dist = torch.sum(weights_flat*(us_pr_flat - us_flat)**2, dim=1)
-    elif dist_fun == 'l1':
-        dist = torch.sum(torch.abs(us_pr_flat - us_flat), dim=1)
+    dist = torch.nan_to_num(torch.sum(weights_flat*torch.abs(us_pr_flat - us_flat)**float(dist_fun[1:]), dim=1), nan=0)
     constr = torch.sum((torch.stack([scm.decode_flat(us_pr_flat)[var].squeeze(1) for var in vars_], dim=1) - vals_ast)**2, dim=1) * lambda_
     loss = dist + constr
     return loss.sum()
@@ -111,11 +108,15 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=300, sparse=Fal
     # we need to work with flattened us tensors for practical reasons
     # keep us_flat fixed
     us_flat = torch.cat([us[val] for val in scm.graph_structure.keys()], dim=1).clone().detach()
+    if float(dist_fun[1:]) <= 1.:
+        eps = 1e-1
+    else:
+        eps = 0.
     # these are the variables we want to optimize
-    us_pr_flat = torch.cat([us[val] for val in scm.graph_structure.keys()], dim=1).clone().detach().requires_grad_() 
+    us_pr_flat = (torch.cat([us[val] for val in scm.graph_structure.keys()], dim=1).clone().detach() + eps).requires_grad_()
     if log:
         losses = []
-        losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat, dist_fun='l2'))
+        losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat, dist_fun=dist_fun))
     optimizer = torch.optim.Adam([us_pr_flat], lr=lr)
     # optimize
     for _ in range(num_it):
@@ -125,7 +126,7 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=300, sparse=Fal
         if const_idxs is not None:
             mask = torch.ones_like(us_pr_flat, dtype=torch.float32)
             mask[:, const_idxs] = 0
-            us_pr_flat.grad = us_pr_flat.grad * mask 
+            us_pr_flat.grad = torch.nan_to_num(us_pr_flat.grad, nan=0) * mask 
         optimizer.step()
         optimizer.zero_grad()
         if verbose:

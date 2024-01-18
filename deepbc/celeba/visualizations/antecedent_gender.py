@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import torch
 
 def main():
-    # 6
     torch.manual_seed(9)
     scm = CelebaSCM()
     attr = "gender"
@@ -22,7 +21,7 @@ def main():
     us_copy = us.copy()
     us_nc = {"image" : us_copy["image"], attr : torch.zeros_like(us_copy[attr])}
     nc_scm = TwoCompSCM(attr=attr)
-    us_ast_nc = backtrack_linearize(nc_scm, vars_=[attr], vals_ast=val_ast, sparse=False, lambda_=1000, num_it=20, **us_nc)
+    us_ast_nc = backtrack_gradient(nc_scm, vars_=[attr], vals_ast=val_ast, sparse=False, lambda_=1000, num_it=20, **us_nc)
     xs_ast_nc = nc_scm.decode(**us_ast_nc)
     fig = plt.figure()
     fig.add_subplot(1, 3, 1)

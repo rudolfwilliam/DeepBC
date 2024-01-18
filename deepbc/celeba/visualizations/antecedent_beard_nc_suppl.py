@@ -13,14 +13,14 @@ def main():
     val_ast = torch.tensor([[-3]], dtype=torch.float32)
     # DeepBC
     us_cp = us.copy()
-    us_ast = backtrack_linearize(scm, vars_=[attr], vals_ast=val_ast, **us_cp)
+    us_ast = backtrack_gradient(scm, vars_=[attr], vals_ast=val_ast, dist_fun='l2', **us_cp)
     xs_ast = scm.decode(**us_ast)
 
     # DeepBC with non-causal baseline
     nc_scm = TwoCompSCM(attr=attr)
     us_cp = nc_scm.encode(**xs)
     us_nc = {"image" : us_cp["image"], attr : torch.zeros_like(us_cp[attr])}
-    us_ast_nc = backtrack_gradient(nc_scm, vars_=[attr], vals_ast=val_ast, lambda_=1e3, lr=1e-1, num_it=600, **us_nc)
+    us_ast_nc = backtrack_gradient(nc_scm, vars_=[attr], vals_ast=val_ast, lambda_=1e3, lr=1e-1, num_it=600, dist_fun='l2', **us_nc)
     xs_ast_nc = nc_scm.decode(**us_ast_nc)
 
     fig = plt.figure()
@@ -40,3 +40,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    

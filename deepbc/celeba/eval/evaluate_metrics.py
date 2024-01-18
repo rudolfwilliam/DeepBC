@@ -5,10 +5,16 @@ from celeba.data.datasets import Statistics
 from celeba.baselines import TwoCompSCM, WrongGraphCelebaSCM
 from celeba.data.meta_data import attrs, vars
 from celeba.eval.metrics import obs, plausible, causal
+from functools import partial
 import matplotlib.pyplot as plt
 import torch
 
-METHODS = ["DeepBC", "interventional", "tabular CE", "non-causal CE", "wrong graph"]
+METHODS = ["DeepBC", "tabular CE", "interventional", "non-causal CE", "wrong graph"]
+# one of "l1" or "l2"
+MODE = "l1"
+
+obs_p = partial(obs, mode=MODE)
+causal_p = partial(causal, mode=MODE)
 
 def main(sample_size=500, save=True):
     torch.manual_seed(0)
@@ -21,7 +27,7 @@ def main(sample_size=500, save=True):
     # take sample_size data points from data set
     scm_wg = WrongGraphCelebaSCM()
     # losses
-    obs, plauses, causes = {method : [] for method in METHODS}, {method : [] for method in METHODS}, {method : [] for method in METHODS}
+    obss, plauses, causes = {method : [] for method in METHODS}, {method : [] for method in METHODS}, {method : [] for method in METHODS}
     # iterate through data points and generate counterfactuals for each method
     for i in range(sample_size):
         # sample data point
@@ -32,23 +38,23 @@ def main(sample_size=500, save=True):
         val_ast = torch.tensor([[torch.randn(1).item()]], dtype=torch.float32)
         if "DeepBC" in METHODS:
             # make num_it a bit smaller than default because it takes a bit long
-            us_ast = backtrack_linearize(scm, vars_=[attr], vals_ast=val_ast, num_it=10, **us)
+            us_ast = backtrack_linearize(scm, vars_=[attr], vals_ast=val_ast, num_it=10, sparse=True, n_largest=2, **us)
             xs_ast_back = scm.decode(**us_ast)
-            obs["DeepBC"].append(obs(xs, xs_ast_back))
+            obss["DeepBC"].append(obs_p(xs, xs_ast_back))
             plauses["DeepBC"].append(plausible(xs_ast_back, scm))
-            causes["DeepBC"].append(causal(xs, xs_ast_back, scm))
+            causes["DeepBC"].append(causal_p(xs, xs_ast_back, scm))
         if "tabular CE" in METHODS:
             # tabular CE baseline
-            xs_ast_obs = tab_CE(scm, vars_=[attr], vals_ast=val_ast, sparse=False, verbose=False, **us)
-            obs["tabular CE"].append(obs(xs, xs_ast_obs))
+            xs_ast_obs = tab_CE(scm, vars_=[attr], vals_ast=val_ast, sparse=True, n_largest=2, linearization=False, num_it=5000, lr=1e-2, lambda_=1e3, **us)
+            obss["tabular CE"].append(obs_p(xs, xs_ast_obs))
             plauses["tabular CE"].append(plausible(xs_ast_obs, scm))
-            causes["tabular CE"].append(causal(xs, xs_ast_obs, scm))
+            causes["tabular CE"].append(causal_p(xs, xs_ast_obs, scm))
         if "interventional" in METHODS:
             # interventional counterfactual
             xs_int_ast = scm.decode(**us, repl={attr : val_ast})
-            obs["interventional"].append(obs(xs, xs_int_ast))
+            obss["interventional"].append(obs_p(xs, xs_int_ast))
             plauses["interventional"].append(plausible(xs_int_ast, scm))
-            causes["interventional"].append(causal(xs, xs_int_ast, scm))
+            causes["interventional"].append(causal_p(xs, xs_int_ast, scm))
         if "non-causal CE" in METHODS:
             # DeepBC with non-causal baseline
             nc_scm = nc_scms[attr]
@@ -57,34 +63,34 @@ def main(sample_size=500, save=True):
             us_nc = {"image" : us_cp["image"], attr : torch.zeros_like(us_cp[attr])}
             ## other approaches use gradient-based optimization, so do we here for fair comparison
             us_ast_nc = backtrack_gradient(nc_scm, vars_=[attr], vals_ast=stats.destandardize(attr, val_ast), 
-                                           lambda_=1e3, lr=1e-1, num_it=800, **us_nc)
+                                           lambda_=1e3, lr=1e-1, num_it=800, sparse=True, **us_nc)
             xs_ast_nc = nc_scm.decode(**us_ast_nc)
             # get predictions from classifiers (and standardize)
             attrs_preds = {**{attr_ : stats.standardize(attr_, nc_scms[attr_].models[attr_].classifier(xs_ast_nc["image"])) for attr_ in attrs}, 
                             "image" : xs_ast_nc["image"]}
-            obs["non-causal CE"].append(obs(xs, attrs_preds))
+            obss["non-causal CE"].append(obs_p(xs, attrs_preds))
             plauses["non-causal CE"].append(plausible(attrs_preds, scm))
-            causes["non-causal CE"].append(causal(xs, attrs_preds, scm))
+            causes["non-causal CE"].append(causal_p(xs, attrs_preds, scm))
         if "wrong graph" in METHODS:
             # DeepBC with wrong graph
             us_wg = scm_wg.encode(**xs)
             # key order needs to be ordered according to wrong graph structure
             us_wg = {key : us_wg[key] for key in scm_wg.graph_structure.keys()}
-            us_ast_wg_ord = backtrack_linearize(scm_wg, vars_=[attr], vals_ast=val_ast, num_it=10, **us_wg)
+            us_ast_wg_ord = backtrack_linearize(scm_wg, vars_=[attr], vals_ast=val_ast, num_it=10, sparse=True, n_largest=2, **us_wg)
             xs_ast_wg = scm_wg.decode(**us_ast_wg_ord)
             xs_ast_wg = {key : xs_ast_wg[key] for key in vars}
-            obs["wrong graph"].append(obs(xs, xs_ast_wg))
+            obss["wrong graph"].append(obs_p(xs, xs_ast_wg))
             plauses["wrong graph"].append(plausible(xs_ast_wg, scm))
-            causes["wrong graph"].append(causal(xs, xs_ast_wg, scm))
+            causes["wrong graph"].append(causal_p(xs, xs_ast_wg, scm))
         if i % 10 == 0:
             print(i)
             if save:
-                torch.save(obs, "obs.pt")
+                torch.save(obss, "obs.pt")
                 torch.save(plauses, "plauses.pt")
                 torch.save(causes, "causes.pt")
     # save results
     if save:
-        torch.save(obs, "obs.pt")
+        torch.save(obss, "obs.pt")
         torch.save(plauses, "plauses.pt")
         torch.save(causes, "causes.pt")
 
