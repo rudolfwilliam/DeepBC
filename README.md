@@ -50,7 +50,7 @@ We utilize a separate directory for each of the data sets `morphomnist` and `cel
 └── ...    
 ```
 
-The coarse directory structure of `morphomnist` is analogous to that of `celeba`.
+The directory structure of `morphomnist` is analogous to that of `celeba`.
 
 Configurations for the individual architectures and algorithms can be found in `config` directories within the respective subdirectories. For instance, the configuration for the celeba VAE architecture can be found in `./celeba/scm/config/vae.json`.
 
