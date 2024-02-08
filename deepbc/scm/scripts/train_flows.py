@@ -14,3 +14,4 @@ def train_flow(flow, config, data_class, graph_structure, attrs, default_root_di
     train_data_loader = torch.utils.data.DataLoader(train_set, batch_size=config["batch_size_train"], shuffle=True)
     val_data_loader = torch.utils.data.DataLoader(val_set, batch_size=config["batch_size_val"], shuffle=False)
     trainer.fit(flow, train_data_loader, val_data_loader)
+    

@@ -4,17 +4,21 @@ Minor variations in results may arise from hardware disparities. It is anticipat
 
 ## Morpho-MNIST
 
-Fig. 3: `python -m morphomnist.visualizations.imgs_intensity`
-
 Fig. 4 (a): `python -m morphomnist.visualizations.uiast_to_utast`
 
 Fig. 4 (b): `python -m morphomnist.visualizations.iast_to_tast`
 
 Fig. 4 (c): `python -m morphomnist.visualizations.tast_to_iast`
 
+Fig. 5: `python -m morphomnist.visualizations.imgs_intensity`
+
 ## CelebA
 
-Fig. 5: `python -m celeba.visualizations.antecedent_beard_sparse`
+Fig. 6: `python -m celeba.visualizations.antecedent_beard_sparse`
+
+Fig. 7: `python -m celeba.visualizations.antecedent_beard_OOD`
+
+Fig. 8: `python -m celeba.visualizations.sample`
 
 ## Supplementary
 

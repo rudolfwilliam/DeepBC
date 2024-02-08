@@ -2,9 +2,8 @@
 
 import matplotlib.pyplot as plt
 import torch
-#import tikzplotlib
 import numpy as np
-#import seaborn as sns
+import seaborn as sns
 from optim import backtrack_linearize
 from morphomnist.data.datasets import MorphoMNISTLike
 from sampling import langevin_mc
@@ -33,21 +32,10 @@ def main(data_dir, idx):
     us_ast_stacked = {key : torch.cat([sample[key] for sample in us_asts], dim=0) for key in scm.graph_structure.keys()}
     xs_ast_stacked = scm.decode(**us_ast_stacked)
 
-    #plt.scatter(xs_ast['intensity'], xs_ast['thickness'], c=list(plt.rcParams['axes.prop_cycle'])[3]['color'], s=20)
-    #plt.scatter(xs_ast['intensity'], xs_ast['thickness'], c=list(plt.rcParams['axes.prop_cycle'])[5]['color'], s=2.5)
-    #plt.plot(i, t, 'o', color=list(plt.rcParams['axes.prop_cycle'])[0]['color'])
-    #plt.gca().set_aspect('equal')
-    # plt.scatter(x=xs_ast_stacked['intensity'].squeeze(), y=xs_ast_stacked['thickness'].squeeze())
-    # plt.scatter(x=xs_ast_back['intensity'].squeeze(), y=xs_ast_back['thickness'].squeeze())   
-    #box = sns.boxplot(x=torch.round(xs_ast_stacked["intensity"].squeeze(), decimals=1).numpy(), y=xs_ast_stacked["thickness"].squeeze().numpy(), color=list(plt.rcParams['axes.prop_cycle'])[0]['color'])
-    #strp = sns.stripplot({rg[i, 0].item() : xs_ast_back['thickness'][i].numpy() for i in range(rg.shape[0])}, palette=[list(plt.rcParams['axes.prop_cycle'])[1]['color']], size=5, marker="D") 
-    #plt.show()
-    # Set every second x-axis label to an empty string
-    #box.set_xticks(box.get_xticks()[::2])
-    #box.set_xticklabels(box.get_xticklabels()[::2])
-    print("done")
+    plt.plot(i, t, 'o', color=list(plt.rcParams['axes.prop_cycle'])[0]['color'])
+    plt.gca().set_aspect('equal')  
+    plt.show()
     torch.save(xs_ast_stacked, "./morphomnist/visualizations/xs_ast_stacked.pt")
-    #tikzplotlib.save("./morphomnist/visualizations/iast_to_tast_sample.tex", axis_height='6cm', axis_width='15cm')
 
 if __name__ == "__main__":
     main("./morphomnist/data", idx=5)

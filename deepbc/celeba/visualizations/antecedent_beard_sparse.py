@@ -13,7 +13,6 @@ def main():
 
     ########## sparse methods ##########
 
-    # observational sparse CE baseline
     us = backtrack_linearize(scm, vars_=["age", "gender", "bald"], vals_ast=torch.tensor([[-4.5, -0.5, 0.5]], dtype=torch.float32), **us)
     xs = scm.decode(**us)
     
