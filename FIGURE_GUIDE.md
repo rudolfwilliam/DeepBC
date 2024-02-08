@@ -22,19 +22,17 @@ Fig. 8: `python -m celeba.visualizations.sample`
 
 ## Supplementary
 
-Fig. 6:  `python -m morphomnist.visualizations.lin_vs_GD`
+Fig. 9:  `python -m morphomnist.visualizations.lin_vs_GD`
 
-Fig. 7: `python -m morphomnist.visualizations.iast_to_tast` (run three times with the reported thickness weights)
+Fig. 10: `python -m morphomnist.visualizations.sample_iast_to_tast`
 
-Fig. 8 (a): `python -m celeba.visualizations.antecedent_beard_OOD`
+Fig. 11: `python -m morphomnist.visualizations.iast_to_tast` (run three times with the reported thickness weights)
 
-Fig. 8 (b): `python -m celeba.visualizations.multi_antecedents`
+Fig. 12 (a): `python -m celeba.visualizations.multi_antecedents`
 
-Fig. 9 (c): `python -m celeba.visualizations.antecedent_beard_suppl`
+Fig. 12 (b): `python -m celeba.visualizations.antecedent_beard_suppl`
 
-Fig. 9 (d): `python -m celeba.visualizations.comp_nc_suppl`
-
-Fig. 9 (e): `python -m celeba.visualizations.antecedent_beard_sparse`
+Fig. 12 (c): `python -m celeba.visualizations.antecedent_beard_sparse`
 
 ## Other figures
 
