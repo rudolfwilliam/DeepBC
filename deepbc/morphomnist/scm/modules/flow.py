@@ -1,5 +1,5 @@
 from scm.modules import GCondFlow
-from custom_components import CondFlow, SigmoidFlow, ConstAddScaleFlow
+from custom_components import CondFlow, SigmoidFlow, LogOddsFlow, ConstAddScaleFlow
 import normflows as nf
 from utils import override
 from normflows.flows import AutoregressiveRationalQuadraticSpline, MaskedAffineAutoregressive
@@ -40,6 +40,24 @@ class ThicknessFlow(GCondFlow):
         loss = self.flow.forward_kld(x)
         self.log("val_loss", loss) 
         return loss
+
+
+class WGThicknessFlow(GCondFlow):
+    """Thickness flow with wrong graph structure. Conditional on intensity."""
+    def __init__(self, name="thickness_wg", n_layers=3, lr=1e-6):
+        self.name = name
+        super(WGThicknessFlow, self).__init__(name, lr)
+        base = nf.distributions.base.DiagGaussian(1)
+        layers = [] 
+        # flow is conditional on intensity
+        layers.append(MaskedAffineAutoregressive(features=1, hidden_features=1, context_features=1))
+        for _ in range(n_layers):
+            layers.append(AutoregressiveRationalQuadraticSpline(1, 1, 1))
+        layers.append(LogOddsFlow())
+        layers.append(ConstAddScaleFlow(const=10., scale=1/100))
+        layers.append(affine.coupling.AffineConstFlow((1,)))
+        self.flow = CondFlow(base, layers)
+
     
 class IntensFlow(GCondFlow):
     def __init__(self, name="intensity", n_layers=3, lr=1e-6):
@@ -56,3 +74,9 @@ class IntensFlow(GCondFlow):
         layers.append(ConstAddScaleFlow(const=2., scale=1/5))
         layers.append(affine.coupling.AffineConstFlow((1,)))
         self.flow = CondFlow(base, layers)
+
+
+class WGIntensFlow(ThicknessFlow):
+    """Intensity flow with wrong graph structure. Unconditional. Same architecture as ThicknessFlow."""
+    def __init__(self, name="intensity_wg", n_layers=3, lr=1e-6):
+        super(WGIntensFlow, self).__init__(name, n_layers, lr)

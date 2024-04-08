@@ -4,6 +4,7 @@ from torch import nn
 from normflows.flows import Flow
 import torch
 
+
 class ConstAddScaleFlow(Flow):
     """
     Performs a simple affine transformation on the input with non-trainable parameters.
@@ -18,6 +19,7 @@ class ConstAddScaleFlow(Flow):
     
     def inverse(self, z):
         return (z + self.const)*self.scale, torch.ones(len(z), device=z.device)/self.scale
+    
     
 class SigmoidFlow(Flow):
     """
@@ -34,6 +36,24 @@ class SigmoidFlow(Flow):
         inv = torch.log(z) - torch.log(1 - z)
         log_deriv = (z - 2*torch.log(1 + torch.exp(z))).squeeze()
         return inv, log_deriv
+
+
+class LogOddsFlow(Flow):
+    """
+    Performs a logit transformation on the input.
+    """
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, z):
+        log_deriv = -torch.log(z*(1 - z)).squeeze()
+        return torch.log(z/(1 - z)), log_deriv
+    
+    def inverse(self, z):
+        inv = torch.sigmoid(z)
+        log_deriv = -torch.log(z*(1 - z)).squeeze()
+        return inv, log_deriv
+
 
 class CondFlow(Flow):
     """

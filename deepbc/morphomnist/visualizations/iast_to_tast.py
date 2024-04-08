@@ -1,4 +1,4 @@
-"""Visualize the *antescedant t_ast* to i_ast mapping for a given example (deep backtracking and interventional)."""
+"""Visualize the *antecedant t_ast* to i_ast mapping for a given example (deep backtracking and interventional)."""
 
 import matplotlib.pyplot as plt
 import torch
