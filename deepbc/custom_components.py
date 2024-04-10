@@ -46,12 +46,13 @@ class LogOddsFlow(Flow):
         super().__init__()
 
     def forward(self, z):
-        log_deriv = -torch.log(z*(1 - z)).squeeze()
-        return torch.log(z/(1 - z)), log_deriv
+        val = torch.nan_to_num(torch.log(z/(1 - z)), 0)
+        log_deriv = torch.nan_to_num(-torch.log(z*(1 - z)).squeeze(), 0)
+        return val, log_deriv
     
     def inverse(self, z):
         inv = torch.sigmoid(z)
-        log_deriv = -torch.log(z*(1 - z)).squeeze()
+        log_deriv = torch.nan_to_num(-torch.log(z*(1 - z)).squeeze(), 0)
         return inv, log_deriv
 
 

@@ -43,3 +43,4 @@ class GCondFlow(pl.LightningModule, StructuralEquation):
     def on_train_epoch_end(self):
         if self.verbose:
             print(f"train_loss = {self.trainer.callback_metrics['train_loss']}, val_loss = {self.trainer.callback_metrics['val_loss']}")
+            
