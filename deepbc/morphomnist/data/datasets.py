@@ -62,6 +62,7 @@ def normalize(data, load=False, save=True, path='./morphomnist/data/norm_params.
 
     return normalized_images, normalized_intens, normalized_thickn
 
+
 class MorphoMNISTLike(Dataset):
     def __init__(self, data_dir='./morphomnist/data', train=True, columns=None, normalize_=True, transform=None):
         self.root_dir = data_dir
@@ -90,4 +91,14 @@ class MorphoMNISTLike(Dataset):
         if self.transform:
             return self.transform(item["image"], item['attrs'])
         return item['image'], item['attrs']
-    
+
+
+class MorphoMNISTLikeAlt(MorphoMNISTLike):
+    """Alternative initialization of MorphoMNISTLike dataset with data as arguments."""
+    def __init__(self, images, thicknesses, intensities, metrics_df, columns=None, transform=None):
+        super().__init__(transform=transform)
+        self.images = images
+        self.metrics = {'intensity': intensities, 'thickness': thicknesses}
+        if columns is None:
+            columns = metrics_df.columns
+        self.attrs = torch.cat([self.metrics[attr].unsqueeze(1) for attr in attrs], dim=1)
