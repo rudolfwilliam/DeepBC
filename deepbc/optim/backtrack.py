@@ -28,24 +28,25 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=Fal
     vals_ast = convert_vals_ast(vals_ast)
     # we need to work with flattened us_pr tensor for practical reasons
     us_pr_flat_init = torch.cat([us[key] for key in scm.graph_structure.keys()], dim=1).clone().detach()
+    b, _ = vals_ast.shape
     # optimize over these
     us_pr_flat = us_pr_flat_init.clone().detach().requires_grad_()
     if log:
         losses = []
         losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat_init, dist_fun='l2'))
     # leave out constant variables
-    if const_idxs is not None:
-        active_idxs = torch.tensor([i for i in range(us_pr_flat.shape[1]) if i not in const_idxs])
-    else:
+    indices = torch.arange(us_pr_flat.shape[1]).unsqueeze(0).expand(b, -1)
+    if const_idxs is None:
         # select all
-        active_idxs = torch.tensor([i for i in range(us_pr_flat.shape[1])])
+        const_idxs = torch.tensor([[] for _ in range(b)])
+    mask = ~torch.any(indices.unsqueeze(-1) == const_idxs.unsqueeze(1), dim=-1)
     # set weight matrix
     if weights is None:
         # all 1s
-        weights_flat = torch.ones(us_pr_flat.shape[1])
+        weights_flat = torch.ones(us_pr_flat.shape[1]).repeat(b, 1)
     else:
         # repeat according to dim of u and flatten weights
-        weights_flat = torch.cat([torch.tensor(weights[w]).repeat(us[w].shape[1]) for w in scm.graph_structure.keys()], dim=0) 
+        weights_flat = torch.cat([torch.tensor(weights[w]).repeat(us[w].shape[1]) for w in scm.graph_structure.keys()], dim=0).repeat(b, 1)
     def decoder_wrapper(us_pr_flat):
         return torch.stack([scm.decode_flat(us_pr_flat)[var].squeeze(1) for var in vars_], dim=1)
     for _ in range(num_it):
@@ -53,15 +54,16 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=Fal
         # compute constant
         f0 = decoder_wrapper(us_pr_flat)
         # compute Jacobian (diagonal computation does not seem to be avoidable, see https://discuss.pytorch.org/t/jacobian-functional-api-batch-respecting-jacobian/84571)
-        J = torch.diagonal(torch.autograd.functional.jacobian(decoder_wrapper, us_pr_flat), dim1=0, dim2=2).transpose(dim0=0, dim1=2)[:, active_idxs, :]
+        J = torch.diagonal(torch.autograd.functional.jacobian(decoder_wrapper, us_pr_flat), dim1=0, dim2=2).transpose(dim0=0, dim1=2)[mask, :].view(b, -1, len(vars_))
         # compute linearization
-        temp = vals_ast - f0 + torch.bmm(us_pr_flat[:, active_idxs].unsqueeze(1), J).squeeze(1)
-        # solve closed form of linearization 
+        temp = vals_ast - f0 + torch.bmm(us_pr_flat[mask].view(b, -1).unsqueeze(1), J).squeeze(1)
+        # solve closed form of linearization
         with torch.no_grad():
-            right = (1/lambda_) * torch.diag(weights_flat[active_idxs]) + torch.bmm(J, J.transpose(1, 2)) + eps * torch.eye(J.shape[1])
-            left = (1/lambda_) * weights_flat[active_idxs] * us_pr_flat_init[:, active_idxs].unsqueeze(1) + torch.bmm(temp.unsqueeze(1), torch.transpose(J, 1, 2))
+            right = (1/lambda_) * torch.diag_embed(weights_flat[mask].view(b, -1), dim1=1, dim2=2) + torch.bmm(J, J.transpose(1, 2)) + eps * torch.eye(J.shape[1])
+            left = (1/lambda_) * (weights_flat[mask].view(b, -1) * us_pr_flat_init[mask].view(b, -1)).unsqueeze(1) + torch.bmm(temp.unsqueeze(1), torch.transpose(J, 1, 2))
             # pseudo-inverse is more stable than inverse
-            us_pr_flat[:, active_idxs] = torch.bmm(left, pinv(right)).squeeze(1)
+            us_pr_flat[mask] = torch.bmm(left, pinv(right)).squeeze(1).view(-1)
+            us_pr_flat = us_pr_flat.view(b, -1)
         us_pr_flat = us_pr_flat.clone().detach().requires_grad_()
         if log:
             losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat_init, dist_fun='l2'))
@@ -162,7 +164,7 @@ def sparsify(scm, vars_, vals_ast, us_pr_flat, lambda_=10000, num_it=50, n_large
     # only select components of us_pr_flat that have a large deviation from us_flat
     us_flat = torch.cat([us[key] for key in scm.graph_structure.keys()], dim=1).clone().detach()
     _, top_idxs = torch.topk(torch.abs(us_pr_flat - us_flat), n_largest)
-    const_idxs = torch.tensor([i for i in range(us_pr_flat.shape[1]) if i not in top_idxs])
+    const_idxs = torch.tensor([[j for j in range(us_pr_flat.shape[1]) if j not in top_idxs[i]] for i in range(us_pr_flat.shape[0])])
     if linearize:
         return backtrack_linearize(scm, vars_, vals_ast, lambda_=lambda_, num_it=num_it, const_idxs=const_idxs, 
                                    sparse=False, log=log, log_file=log_file, **us)
