@@ -5,10 +5,11 @@ from utils import override
 from normflows.flows import AutoregressiveRationalQuadraticSpline, MaskedAffineAutoregressive
 from normflows.flows import affine
 
+
 class ThicknessFlow(GCondFlow):
-    def __init__(self, name="thickness", n_layers=3, lr=1e-6):
+    def __init__(self, name="thickness", n_layers=3, lr=1e-6, verbose=False):
         self.name = name
-        super(ThicknessFlow, self).__init__(name, lr)
+        super(ThicknessFlow, self).__init__(name, lr, verbose)
         base = nf.distributions.base.DiagGaussian(1)
         layers = [] 
         for _ in range(n_layers):
@@ -32,6 +33,7 @@ class ThicknessFlow(GCondFlow):
     def training_step(self, train_batch, batch_idx):
         x, _ = train_batch
         loss = self.flow.forward_kld(x)
+        self.log("train_loss", loss)
         return loss
     
     @override
@@ -44,9 +46,9 @@ class ThicknessFlow(GCondFlow):
 
 class WGThicknessFlow(GCondFlow):
     """Thickness flow with wrong graph structure. Conditional on intensity."""
-    def __init__(self, name="thickness_wg", n_layers=3, lr=1e-6):
+    def __init__(self, name="thickness_wg", n_layers=3, lr=1e-6, verbose=False):
         self.name = name
-        super(WGThicknessFlow, self).__init__(name, lr)
+        super(WGThicknessFlow, self).__init__(name, lr, verbose)
         base = nf.distributions.base.DiagGaussian(1)
         layers = [] 
         # flow is conditional on intensity
@@ -60,9 +62,9 @@ class WGThicknessFlow(GCondFlow):
 
     
 class IntensFlow(GCondFlow):
-    def __init__(self, name="intensity", n_layers=3, lr=1e-6):
+    def __init__(self, name="intensity", n_layers=3, lr=1e-6, verbose=False):
         self.name = name
-        super(IntensFlow, self).__init__(name, lr)
+        super(IntensFlow, self).__init__(name, lr, verbose)
         base = nf.distributions.base.DiagGaussian(1)
         layers = []
         # flow is conditional on thickness
@@ -78,5 +80,5 @@ class IntensFlow(GCondFlow):
 
 class WGIntensFlow(ThicknessFlow):
     """Intensity flow with wrong graph structure. Unconditional. Same architecture as ThicknessFlow."""
-    def __init__(self, name="intensity_wg", n_layers=3, lr=1e-6):
-        super(WGIntensFlow, self).__init__(name, n_layers, lr)
+    def __init__(self, name="intensity_wg", n_layers=3, lr=1e-6, verbose=False):
+        super(WGIntensFlow, self).__init__(name, n_layers, lr, verbose)

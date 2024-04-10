@@ -16,3 +16,4 @@ class MmnistSCM(SCM):
                   "image" : MmnistCondVAE(cond_dim=len(attrs), latent_dim=config_vae["latent_dim"], 
                                           n_chan=config_vae["n_chan"], beta=config_vae["beta"], name="image")}
         super(MmnistSCM, self).__init__(ckpt_path=ckpt_path, graph_structure=graph_structure, **models)
+        
