@@ -2,7 +2,7 @@
 
 import matplotlib.pyplot as plt
 import torch
-#import tikzplotlib
+import tikzplotlib
 import numpy as np
 import seaborn as sns
 from morphomnist.data.datasets import MorphoMNISTLike
@@ -15,7 +15,7 @@ plt.style.use('ggplot')
 
 rg = torch.tensor(np.arange(-1.9, 2, 0.1), dtype=torch.float32).view(-1, 1)
 
-def main(data_dir, weights={"thickness" : 1., "intensity" : 1., "image" : 1.}, idx=5, wrong_graph=False, sparse=False, dist_fun='l4'):
+def main(data_dir, weights={"thickness" : 1., "intensity" : 1., "image" : 1.}, idx=5, wrong_graph=False, sparse=False, custom_dist=False):
     scm = MmnistSCM()
     scm.eval()
     # Load the training images
@@ -25,8 +25,9 @@ def main(data_dir, weights={"thickness" : 1., "intensity" : 1., "image" : 1.}, i
     i = attrs_[attrs.index('intensity')]
     t = attrs_[attrs.index('thickness')]
     us = scm.encode(image=img.view(1, 1, 28, 28).repeat(rg.shape[0], 1, 1, 1), intensity=i.view(-1, 1).repeat(rg.shape[0], 1), thickness=t.view(-1, 1).repeat(rg.shape[0], 1))
-    if dist_fun == 'l4':
-        us_ast = backtrack_gradient(scm, vars_=['intensity'], weights=weights, vals_ast=rg, dist_fun='l4', lambda_=1e5, verbose=True, lr=1e-2, num_it=10000, **us)
+    if custom_dist:
+        custom_dist = {'thickness' : 'l6', 'intensity' : 'l2', 'image' : 'l2'}
+        us_ast = backtrack_gradient(scm, vars_=['intensity'], weights=weights, vals_ast=rg, lambda_=1e4, verbose=True, lr=5e-2, num_it=5000, custom_dist=custom_dist, **us)
     else:
         # backtrack entire range of thicknesses at once
         us_ast = backtrack_linearize(scm, vars_=['intensity'], weights=weights, vals_ast=rg, n_largest=1, sparse=sparse, **us)
@@ -50,11 +51,11 @@ def main(data_dir, weights={"thickness" : 1., "intensity" : 1., "image" : 1.}, i
     plt.xlim(-3, 3)  # Set x-axis range from -3 to 3
     plt.ylim(-3, 4)
     plt.gca().set_aspect('equal')
-    plt.show()
-    #tikzplotlib.save("./morphomnist/visualizations/tex_files/visualize_tast_to_iast_w8.tex")
+    #plt.show()
+    tikzplotlib.save("./morphomnist/visualizations/tex_files/visualize_tast_to_iast_custom_loss.tex")
 
 if __name__ == "__main__":
-    main("./morphomnist/data", weights={"thickness" : 1.15, "intensity" : 1., "image" : 1.}, 
-         idx=5, wrong_graph=True, sparse=True, dist_fun=None)
+    main("./morphomnist/data", weights={"thickness" : 1., "intensity" : 10., "image" : 1.}, 
+         idx=5, wrong_graph=True, sparse=True, custom_dist=True)
 
 # thickness = 1.15 for sparse=True

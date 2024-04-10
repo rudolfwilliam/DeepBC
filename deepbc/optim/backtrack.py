@@ -4,7 +4,7 @@ import torch
 from torch.linalg import pinv
 from utils import convert_vals_ast
 
-def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=False, n_largest=2, 
+def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=False, n_largest=2,
                         weights=None, const_idxs=None, log=False, log_file=None, verbose=False, eps=0, **us):
     """Backtracking with constraint linearization (recommended). Can be done in a batched fashion.
 
@@ -78,18 +78,22 @@ def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=Fal
     us_ast = unflatten(us_pr_flat.detach(), us, scm)
     return us_ast
 
-def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun='l2', weights_flat=None):
+def bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun='l2', weights_flat=None, custom_dist=None, us=None):
     """Compute the loss for the backtracking problem, required for gradient based optimization. 
        Can be done in a batched fashion, but not recommended due to highly variable convergence time and sensitivity for lambda_."""
     if weights_flat is None:
         weights_flat = torch.ones(us_pr_flat.shape[1])
-    dist = torch.nan_to_num(torch.sum(weights_flat*torch.abs(us_pr_flat - us_flat)**float(dist_fun[1:]), dim=1), nan=0)
+    if custom_dist is not None:
+        dist = custom_dist_fun(custom_dist, us_pr_flat, us_flat, us=us)
+    else:
+        dist = torch.abs(us_pr_flat - us_flat)**float(dist_fun[1:])
+    w_dist = torch.nan_to_num(torch.sum(weights_flat*dist, dim=1), nan=0)
     constr = torch.sum((torch.stack([scm.decode_flat(us_pr_flat)[var].squeeze(1) for var in vars_], dim=1) - vals_ast)**2, dim=1) * lambda_
-    loss = dist + constr
+    loss = w_dist + constr
     return loss.sum()
 
 def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=300, sparse=False, n_largest=2, lr=1e-1, dist_fun='l2', 
-                       const_idxs=None, log=False, log_file=None, verbose=False, **us):
+                       const_idxs=None, log=False, log_file=None, verbose=False, custom_dist=None, **us):
     """First-order method (Adam) for solving the backtracking problem.
 
        :param SCM scm: Structural causal model to be used
@@ -118,11 +122,11 @@ def backtrack_gradient(scm, vars_, vals_ast, lambda_=1e4, num_it=300, sparse=Fal
     us_pr_flat = (torch.cat([us[val] for val in scm.graph_structure.keys()], dim=1).clone().detach() + eps).requires_grad_()
     if log:
         losses = []
-        losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat, dist_fun=dist_fun))
+        losses.append(bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_pr_flat, dist_fun=dist_fun, custom_dist=custom_dist, us=us))
     optimizer = torch.optim.Adam([us_pr_flat], lr=lr)
     # optimize
     for _ in range(num_it):
-        loss = bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun)
+        loss = bc_loss(scm, vars_, vals_ast, lambda_, us_pr_flat, us_flat, dist_fun, custom_dist=custom_dist, us=us)
         loss.backward()
         # mask out constant variables
         if const_idxs is not None:
@@ -171,3 +175,21 @@ def sparsify(scm, vars_, vals_ast, us_pr_flat, lambda_=10000, num_it=50, n_large
     else:
         return backtrack_gradient(scm, vars_, vals_ast, lambda_=lambda_, num_it=num_it, const_idxs=const_idxs, 
                                   sparse=False, dist_fun='l2', log=log, log_file=log_file, **us)
+
+def custom_dist_fun(custom_dist, us_pr_flat, us_flat, us):
+    dist_vec = torch.zeros_like(us_pr_flat)
+    # loop through keys and construct dist
+    i = 0
+    for key in custom_dist.keys():
+        if custom_dist[key] == 'l1':
+            dist_vec[:, i:(i + us[key].shape[1])] = torch.abs(us_pr_flat[:, i:(i + us[key].shape[1])] - us_flat[:, i:(i + us[key].shape[1])])
+        elif custom_dist[key] == 'l2':
+            dist_vec[:, i:(i + us[key].shape[1])] = (us_pr_flat[:, i:(i + us[key].shape[1])] - us_flat[:, i:(i + us[key].shape[1])])**2
+        elif custom_dist[key] == 'l4':
+            dist_vec[:, i:(i + us[key].shape[1])] = (us_pr_flat[:, i:(i + us[key].shape[1])] - us_flat[:, i:(i + us[key].shape[1])])**4
+        elif custom_dist[key] == 'l6':
+            dist_vec[:, i:(i + us[key].shape[1])] = (us_pr_flat[:, i:(i + us[key].shape[1])] - us_flat[:, i:(i + us[key].shape[1])])**6
+        else:
+            raise ValueError("Unknown norm: " + custom_dist[key])
+        i += us[key].shape[1]
+    return torch.nan_to_num(dist_vec, 0)
