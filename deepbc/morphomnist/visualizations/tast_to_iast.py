@@ -39,11 +39,11 @@ def main(data_dir, weights={"thickness" : 1., "intensity" : 1., "image" : 1.}, i
     # plt.scatter(train_set.metrics['intensity'], train_set.metrics['thickness'], c='r')
     plt.scatter(xs_ast['intensity'], xs_ast['thickness'], c=list(plt.rcParams['axes.prop_cycle'])[3]['color'], s=20)
     if wrong_graph:
-        scm = WGMmnistSCM()
-        scm.eval()
-        us = scm.encode(image=img.view(1, 1, 28, 28).repeat(rg.shape[0], 1, 1, 1), intensity=i.view(-1, 1).repeat(rg.shape[0], 1), thickness=t.view(-1, 1).repeat(rg.shape[0], 1))
-        us_ast = backtrack_linearize(scm, vars_=['intensity'], weights=weights, vals_ast=rg, n_largest=1, sparse=sparse, **us)
-        xs_ast = scm.decode(**us_ast)
+        scm_wg = WGMmnistSCM()
+        scm_wg.eval()
+        us = scm_wg.encode(image=img.view(1, 1, 28, 28).repeat(rg.shape[0], 1, 1, 1), intensity=i.view(-1, 1).repeat(rg.shape[0], 1), thickness=t.view(-1, 1).repeat(rg.shape[0], 1))
+        us_ast = backtrack_linearize(scm_wg, vars_=['intensity'], weights=weights, vals_ast=rg, n_largest=1, sparse=sparse, **us)
+        xs_ast = scm_wg.decode(**us_ast)
         plt.scatter(xs_ast['intensity'], xs_ast['thickness'], c=list(plt.rcParams['axes.prop_cycle'])[5]['color'], s=20)
     else:
         plt.scatter(rg, torch.full((len(rg),), t), c=list(plt.rcParams['axes.prop_cycle'])[5]['color'], s=10)
@@ -51,11 +51,11 @@ def main(data_dir, weights={"thickness" : 1., "intensity" : 1., "image" : 1.}, i
     plt.xlim(-3, 3)  # Set x-axis range from -3 to 3
     plt.ylim(-3, 4)
     plt.gca().set_aspect('equal')
-    #plt.show()
-    tikzplotlib.save("./morphomnist/visualizations/tex_files/visualize_tast_to_iast_custom_loss.tex")
+    plt.show()
+    #tikzplotlib.save("./morphomnist/visualizations/tex_files/visualize_tast_to_iast_custom_loss.tex")
 
 if __name__ == "__main__":
-    main("./morphomnist/data", weights={"thickness" : 1., "intensity" : 10., "image" : 1.}, 
-         idx=5, wrong_graph=True, sparse=True, custom_dist=True)
+    main("./morphomnist/data", weights={"thickness" : 1.15, "intensity" : 1., "image" : 1.}, 
+         idx=5, wrong_graph=True, sparse=True)
 
 # thickness = 1.15 for sparse=True

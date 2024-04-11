@@ -6,7 +6,7 @@
     "batch_size_train" : 64,
     "batch_size_val" : 10000,
     "lr" : 1e-4,
-    "patience" : 10,
+    "patience" : 5,
     "max_epochs" : 1000,
     "train_val_split" : 0.8
 }

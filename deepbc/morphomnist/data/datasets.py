@@ -95,10 +95,8 @@ class MorphoMNISTLike(Dataset):
 
 class MorphoMNISTLikeAlt(MorphoMNISTLike):
     """Alternative initialization of MorphoMNISTLike dataset with data as arguments."""
-    def __init__(self, images, thicknesses, intensities, metrics_df, columns=None, transform=None):
+    def __init__(self, images, thicknesses, intensities, transform=None):
         super().__init__(transform=transform)
         self.images = images
         self.metrics = {'intensity': intensities, 'thickness': thicknesses}
-        if columns is None:
-            columns = metrics_df.columns
         self.attrs = torch.cat([self.metrics[attr].unsqueeze(1) for attr in attrs], dim=1)
