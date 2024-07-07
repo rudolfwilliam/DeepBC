@@ -10,3 +10,4 @@ attr2int = {'intensity' : 0, 'thickness' : 1, 'image' : 2}
 wrong_graph_structure = {'intensity' : [],
                          'thickness' : ['intensity'],
                          'image'     : ['intensity', 'thickness']}
+                         

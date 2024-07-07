@@ -49,17 +49,16 @@ class CondVAE(StructuralEquation, pl.LightningModule):
     def configure_optimizers(self):
         optimizer = Adam(self.parameters(), lr=self.lr)
         return optimizer
-
-    def training_step(self, train_batch, batch_idx):
+    
+    def step(self, train_batch, mode="train"):
         x, cond = train_batch
         xhat, mu_u, logvar_u = self.forward(x, cond)
         loss = self._vae_loss(xhat, x, mu_u, logvar_u, beta=self.beta)
-        self.log("train_loss", loss, on_step=False, on_epoch=True)
+        self.log(mode + "_loss", loss, on_step=False, on_epoch=True)
         return loss
+    
+    def training_step(self, train_batch, batch_idx):
+        return self.step(train_batch, batch_idx, mode="train")
 
     def validation_step(self, train_batch, batch_idx):
-        x, cond = train_batch
-        xhat, mu_u, logvar_u = self.forward(x, cond)
-        loss = self._vae_loss(xhat, x, mu_u, logvar_u, beta=self.beta)
-        self.log("val_loss", loss, on_step=False, on_epoch=True)
-        return loss
+        return self.step(train_batch, batch_idx, mode="val")

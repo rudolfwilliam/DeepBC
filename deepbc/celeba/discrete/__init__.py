@@ -1,1 +1,0 @@
-from celeba.data.datasets import CelebaDiscrete

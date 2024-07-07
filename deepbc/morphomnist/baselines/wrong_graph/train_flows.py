@@ -12,19 +12,7 @@ def main():
     # initialize models
     thickness_flow = WGThicknessFlow(name="thickness", n_layers=config["n_layers_thickness"], lr=config["lr"], verbose=config["verbose"])
     intens_flow = WGIntensFlow(name="intensity", n_layers=config["n_layers_intensity"], lr=config["lr"], verbose=config["verbose"])
-    # sample data from true learned model
-    #scm = MmnistSCM()
-    #xs, _ = scm.sample(200000)
-    # remove data points that are sampled outside the valid range
-    #idxs = torch.where((xs["intensity"].squeeze() > -2.0) & (xs["intensity"].squeeze() < 2.0))
-    #intensities = xs["intensity"].squeeze()[idxs].detach()
-    #thicknesses = xs["thickness"].squeeze()[idxs].detach()
-    #images = xs["image"].squeeze()[idxs].detach()
-    # train models
-    #train_flow(thickness_flow, config, graph_structure=wrong_graph_structure, attrs=attrs, data_class=MorphoMNISTLikeAlt, 
-    #           intensities=intensities, thicknesses=thicknesses, images=images, default_root_dir="./morphomnist/baselines")
-    #train_flow(intens_flow, config, graph_structure=wrong_graph_structure, attrs=attrs, data_class=MorphoMNISTLikeAlt, 
-    #           intensities=intensities, thicknesses=thicknesses, images=images, default_root_dir="./morphomnist/baselines")
+    # sample data from true learned model 
     train_flow(thickness_flow, config, graph_structure=wrong_graph_structure, attrs=attrs, data_class=MorphoMNISTLike, 
                train=True, default_root_dir="./morphomnist/baselines")
     train_flow(intens_flow, config, graph_structure=wrong_graph_structure, attrs=attrs, data_class=MorphoMNISTLike, 
