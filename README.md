@@ -1,5 +1,7 @@
 # Deep Backtracking Counterfactuals (DeepBC)
 
+[![Python 3.11.3](https://img.shields.io/badge/python-3.11.3-blue.svg)](https://www.python.org/downloads/release/python-3113/)
+
 Repository for the paper [*Deep Backtracking Counterfactuals for Causally Compliant Explanations*](https://arxiv.org/pdf/2310.07665).
 
 <p align="center">
@@ -82,7 +84,7 @@ python -m morphomnist.scm.scripts.train_vae
 
 VAEs may be trained either on CPU or (potentially multiple) GPUs. Training the flows on GPU may result in an error. If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./$/scm/trained_models/checkpoints`. All scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
 
-## How to Cite
+## Citation
 
 If you find our code useful, we would be happy if you could leave our repository a star and cite our preprint. The bibtex entry is
 
@@ -97,4 +99,4 @@ If you find our code useful, we would be happy if you could leave our repository
 
 ## Issues?
 
-If you experience difficulties with the code, just open an issue or write an e-mail to *kkladny [at] tuebingen [dot] mpg [dot] de*.
+If you experience difficulties with the code, just open an issue or write an e-mail to *kkladny [at] tuebingen [dot] mpg [dot] de*. Also, we are happy to merge pull your pull requests if you have an interesting extension.
