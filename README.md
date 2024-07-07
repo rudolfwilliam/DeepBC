@@ -1,6 +1,6 @@
 # Deep Backtracking Counterfactuals (DeepBC)
 
-Repository for the paper *Deep Backtracking Counterfactuals for Causally Compliant Explanations*.
+Repository for the paper [*Deep Backtracking Counterfactuals for Causally Compliant Explanations*](https://arxiv.org/pdf/2310.07665).
 
 <p align="center">
 <img src="/assets/DeepBC_plot_github.svg" width="500">
@@ -81,3 +81,20 @@ python -m morphomnist.scm.scripts.train_vae
 ```
 
 VAEs may be trained either on CPU or (potentially multiple) GPUs. Training the flows on GPU may result in an error. If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./$/scm/trained_models/checkpoints`. All scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
+
+## How to Cite
+
+If you find our code useful, we would be happy if you could leave our repository a star and cite our preprint. The bibtex entry is
+
+```biblatex
+@article{kladny2023deep,
+  title={Deep backtracking counterfactuals for causally compliant explanations},
+  author={Kladny, Klaus-Rudolf and von K{\"u}gelgen, Julius and Sch{\"o}lkopf, Bernhard and Muehlebach, Michael},
+  journal={arXiv preprint arXiv:2310.07665},
+  year={2023}
+}
+```
+
+## Issues?
+
+If you experience difficulties with the code, just open an issue or write an e-mail to *kkladny [at] tuebingen [dot] mpg [dot] de*.
