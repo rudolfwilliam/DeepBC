@@ -99,4 +99,4 @@ If you find our code useful, we would be happy if you could leave our repository
 
 ## Issues?
 
-If you experience difficulties with the code, just open an issue or write an e-mail to *kkladny [at] tuebingen [dot] mpg [dot] de*. Also, we are happy to merge pull your pull requests if you have an interesting extension.
+If you experience difficulties with the code, just open an issue or write an e-mail to *kkladny [at] tuebingen [dot] mpg [dot] de*. Also, we are happy to merge your pull requests if you have an interesting extension.
