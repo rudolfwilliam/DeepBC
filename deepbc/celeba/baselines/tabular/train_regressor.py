@@ -4,9 +4,9 @@ import torch
 import os
 import torch.nn as nn
 import pytorch_lightning as pl
-from deepbc.data.datasets import SelectAttributesTransform
 from deepbc.celeba.data.meta_data import attrs
 from deepbc.celeba.data.datasets import CelebaContinuous
+from deepbc.src.data.datasets import SelectAttributesTransform
 from deepbc.utils import generate_checkpoint_callback, generate_early_stopping_callback
 
 class Regressor(pl.LightningModule):

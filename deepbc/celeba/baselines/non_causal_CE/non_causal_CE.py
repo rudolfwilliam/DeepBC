@@ -1,7 +1,7 @@
-from deepbc.scm.model import SCM
 from deepbc.celeba.baselines.non_causal_CE.vae import CelebaVAE
 from deepbc.celeba.data.modules import Classifier
-from deepbc.scm.modules import StructuralEquation
+from deepbc.src.scm.model import SCM
+from deepbc.src.scm.modules import StructuralEquation
 from deepbc.utils import override
 from json import load
 import os

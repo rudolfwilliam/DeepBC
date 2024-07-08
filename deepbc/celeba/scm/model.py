@@ -2,8 +2,8 @@
 
 from deepbc.celeba.scm.modules import CelebaCondVAE
 from deepbc.celeba.scm.modules import AttributeFlow
-from deepbc.scm.model import SCM
 from celeba.data.meta_data import attrs, graph_structure
+from deepbc.src.scm.model import SCM
 from json import load
 
 class CelebaSCM(SCM):

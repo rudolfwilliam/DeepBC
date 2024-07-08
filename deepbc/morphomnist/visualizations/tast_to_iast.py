@@ -4,7 +4,7 @@ from deepbc.morphomnist.data.datasets import MorphoMNISTLike
 from deepbc.morphomnist.scm.model import MmnistSCM
 from deepbc.morphomnist.baselines.wrong_graph.model import WGMmnistSCM
 from deepbc.morphomnist.data.meta_data import attrs
-from deepbc.optim import backtrack_linearize, backtrack_gradient
+from deepbc.src.optim import backtrack_linearize, backtrack_gradient
 import matplotlib.pyplot as plt
 import torch
 #import tikzplotlib

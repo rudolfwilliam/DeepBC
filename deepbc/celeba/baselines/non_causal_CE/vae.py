@@ -1,4 +1,4 @@
-from deepbc.scm.modules import CondVAE
+from deepbc.src.scm.modules import CondVAE
 from deepbc.utils import flatten_list
 from torch import nn
 from collections import OrderedDict

@@ -1,7 +1,7 @@
 from deepbc.celeba.data.datasets import CelebaContinuous
 from deepbc.celeba.scm.modules import CelebaCondVAE
 from deepbc.celeba.data.meta_data import attrs
-from deepbc.scm import train_vae
+from deepbc.src.scm import train_vae
 from deepbc.utils import get_config
 import torch
 

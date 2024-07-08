@@ -1,6 +1,6 @@
-from deepbc.scm.model import SCM
-from deepbc.scm.modules import StructuralEquation
-from deepbc.optim import backtrack_gradient, backtrack_linearize
+from deepbc.src.scm.model import SCM
+from deepbc.src.scm.modules import StructuralEquation
+from deepbc.src.optim import backtrack_gradient, backtrack_linearize
 from deepbc.utils import override
 from deepbc.celeba.baselines.tabular.train_regressor import Regressor
 from deepbc.celeba.data.meta_data import attrs

@@ -1,5 +1,5 @@
 from deepbc.morphomnist import MmnistSCM
-from deepbc.optim import backtrack_linearize
+from deepbc.src.optim import backtrack_linearize
 import torch
 import matplotlib.pyplot as plt
 

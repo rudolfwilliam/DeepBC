@@ -3,8 +3,8 @@
 from deepbc.morphomnist.data.datasets import MorphoMNISTLike
 from deepbc.morphomnist.scm.model import MmnistSCM
 from deepbc.morphomnist.data.meta_data import attrs
-from deepbc.sampling import langevin_mc
-from deepbc.optim import backtrack_linearize
+from deepbc.src.sampling import langevin_mc
+from deepbc.src.optim import backtrack_linearize
 import matplotlib.pyplot as plt
 import torch
 import numpy as np

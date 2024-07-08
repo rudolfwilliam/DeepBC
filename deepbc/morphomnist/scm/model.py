@@ -2,7 +2,7 @@
 
 from deepbc.morphomnist.scm.modules import MmnistCondVAE, ThicknessFlow, IntensFlow
 from deepbc.morphomnist.data.meta_data import graph_structure, attrs
-from deepbc.scm.model import SCM
+from deepbc.src.scm.model import SCM
 from json import load
 
 class MmnistSCM(SCM):

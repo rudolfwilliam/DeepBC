@@ -1,6 +1,6 @@
 from deepbc.celeba.scm.model import CelebaSCM
 from deepbc.celeba.baselines import TwoCompSCM
-from deepbc.optim import backtrack_linearize, backtrack_gradient
+from deepbc.src.optim import backtrack_linearize, backtrack_gradient
 import matplotlib.pyplot as plt
 import torch
 

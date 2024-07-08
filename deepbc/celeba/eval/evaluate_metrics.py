@@ -4,7 +4,7 @@ from deepbc.celeba.data.datasets import Statistics
 from deepbc.celeba.baselines import TwoCompSCM, WrongGraphCelebaSCM
 from deepbc.celeba.data.meta_data import attrs, vars
 from deepbc.celeba.eval.metrics import obs, plausible, causal
-from deepbc.optim import backtrack_gradient, backtrack_linearize
+from deepbc.src.optim import backtrack_gradient, backtrack_linearize
 from functools import partial
 import matplotlib.pyplot as plt
 import torch

@@ -6,7 +6,8 @@ setup(
     url=None,
     author='Klaus-Rudolf Kladny',
     description='Deep Backtracking Counterfactuals',
-    packages=find_packages(),
+    packages=find_packages(where='src'),
+    package_dir={'': 'src'},
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
