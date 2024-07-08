@@ -28,12 +28,14 @@ We utilize a separate directory for each of the data sets `morphomnist` and `cel
 ```
 .
 ├── FIGURE_GUIDE.md                           # Guide for reproducing figures
+├── setup.py                                  # Can be used to install core functionality
 ├── deepbc
 |      ├── src
-│      │    ├── optim                         # Mode DeepBC optimization algorithms
-│      │    ├── sampling                      # Stochastic DeepBC via Langevin MC sampling
-│      │    ├── data                          # General data functionality
-│      │    └── scm                           # General structural causal model classes
+│      │    └─ deepbc                         # Can be installed as package via setup.py
+│      │         ├── optim                    # Mode DeepBC optimization algorithms
+│      │         ├── sampling                 # Stochastic DeepBC via Langevin MC sampling
+│      │         ├── data                     # General data functionality
+│      │         └── scm                      # General structural causal model classes
 │      ├── celeba
 │      │      ├── data
 │      │      ├── scm                         # Model classes and training scripts (vae, flow)
