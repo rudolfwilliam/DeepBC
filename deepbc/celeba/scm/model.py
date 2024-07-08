@@ -1,10 +1,10 @@
 """This class integrates all individual generative models into a single SCM model."""
 
-from celeba.scm.modules import CelebaCondVAE
-from celeba.scm.modules import AttributeFlow
-from scm.model import SCM
-from json import load
+from deepbc.celeba.scm.modules import CelebaCondVAE
+from deepbc.celeba.scm.modules import AttributeFlow
+from deepbc.scm.model import SCM
 from celeba.data.meta_data import attrs, graph_structure
+from json import load
 
 class CelebaSCM(SCM):
     def __init__(self, ckpt_path="./celeba/scm/trained_models/checkpoints/",

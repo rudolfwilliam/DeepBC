@@ -1,10 +1,11 @@
+from deepbc.celeba.data.modules import Classifier
+from deepbc.celeba.data.datasets import load_data
+from deepbc.celeba.data.meta_data import attrs, attr2int
 from pytorch_lightning import Trainer
 from utils import generate_checkpoint_callback, generate_early_stopping_callback
-from celeba.data.modules import Classifier
-from celeba.data.datasets import load_data
-from celeba.data.meta_data import attrs, attr2int
 from json import load
 import torch
+
 
 def train_classifier(classifier, attr, train_set, val_set, config, default_root_dir):
     trainer = Trainer(accelerator="auto", devices="auto", strategy="auto", 
@@ -27,6 +28,7 @@ def main(ckpt_path="./celeba/scm/trained_models/config/", default_root_dir="./ce
         clsfier = Classifier(attr=attr2int[attr])
         train_classifier(clsfier, attr, train_set, val_set, config, default_root_dir)
     print("done.")
+
 
 if __name__ == "__main__":
     main()

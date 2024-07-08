@@ -1,10 +1,10 @@
-from celeba.scm.model import CelebaSCM
-from optim import backtrack_linearize
-from json import load
-from celeba.data.meta_data import graph_structure
-from celeba.scm.modules import AttributeFlow
+from deepbc.celeba.scm.model import CelebaSCM
+from deepbc.optim import backtrack_linearize
+from deepbc.celeba.data.meta_data import graph_structure
+from deepbc.celeba.scm.modules import AttributeFlow
 import matplotlib.pyplot as plt
 import torch
+from json import load
 
 def main():
     torch.manual_seed(333)

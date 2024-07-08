@@ -1,8 +1,8 @@
 """Algorithms for solving the mode deep backtracking optimization problem."""
 
+from deepbc.utils import convert_vals_ast
 import torch
 from torch.linalg import pinv
-from utils import convert_vals_ast
 
 def backtrack_linearize(scm, vars_, vals_ast, lambda_=1e3, num_it=50, sparse=False, n_largest=2,
                         weights=None, const_idxs=None, log=False, log_file=None, verbose=False, eps=0, **us):

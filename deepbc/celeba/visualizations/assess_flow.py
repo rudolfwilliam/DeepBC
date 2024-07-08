@@ -1,5 +1,5 @@
-from celeba.scm import CelebaSCM
-from celeba.data.meta_data import graph_structure
+from deepbc.celeba.scm import CelebaSCM
+from deepbc.celeba.data.meta_data import graph_structure
 import matplotlib.pyplot as plt
 import torch
 #import tikzplotlib

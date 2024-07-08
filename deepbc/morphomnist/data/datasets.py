@@ -1,13 +1,15 @@
 """A lot here was simply copied over from 
    https://github.com/biomedia-mira/deepscm/datasets/morphomnist/__init__.py, but also extended/changed."""
 
+
+from deepbc.morphomnist.data import io
+from deepbc.morphomnist.data.meta_data import attrs
+from torch.utils.data import Dataset
+from torchvision import transforms
 import torch
 import os
 import pandas as pd
-from torch.utils.data import Dataset
-from torchvision import transforms
-from morphomnist.data import io
-from morphomnist.data.meta_data import attrs
+
 
 def _get_paths(root_dir, train):
     prefix = "train" if train else "t10k"

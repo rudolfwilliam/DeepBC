@@ -1,2 +1,2 @@
-from morphomnist.scm.modules.vae import MmnistCondVAE
-from morphomnist.scm.modules.flow import ThicknessFlow, WGThicknessFlow, WGIntensFlow, IntensFlow
+from deepbc.morphomnist.scm.modules.vae import MmnistCondVAE
+from deepbc.morphomnist.scm.modules.flow import ThicknessFlow, WGThicknessFlow, WGIntensFlow, IntensFlow

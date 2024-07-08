@@ -1,9 +1,9 @@
-from morphomnist.scm.modules import WGThicknessFlow, WGIntensFlow
-from morphomnist.data.datasets import MorphoMNISTLikeAlt, MorphoMNISTLike
-from morphomnist.baselines.wrong_graph.meta_data import attrs, wrong_graph_structure
-from morphomnist.scm.model import MmnistSCM
-from scm import train_flow
-from utils import get_config
+from deepbc.morphomnist.scm.modules import WGThicknessFlow, WGIntensFlow
+from deepbc.morphomnist.data.datasets import MorphoMNISTLikeAlt, MorphoMNISTLike
+from deepbc.morphomnist.baselines.wrong_graph.meta_data import attrs, wrong_graph_structure
+from deepbc.morphomnist.scm.model import MmnistSCM
+from deepbc.scm import train_flow
+from deepbc.utils import get_config
 import torch
 
 def main():

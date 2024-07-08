@@ -1,1 +1,1 @@
-from celeba.data.modules.classifier import Classifier 
+from deepbc.celeba.data.modules.classifier import Classifier 

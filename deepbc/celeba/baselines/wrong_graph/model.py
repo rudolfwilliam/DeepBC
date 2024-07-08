@@ -1,9 +1,9 @@
-from celeba.scm.modules import CelebaCondVAE
-from celeba.scm.modules import AttributeFlow
-from scm.model import SCM
+from deepbc.celeba.scm.modules import CelebaCondVAE
+from deepbc.celeba.scm.modules import AttributeFlow
+from deepbc.scm.model import SCM
+from deepbc.celeba.data.meta_data import attrs
+from deepbc.celeba.baselines.wrong_graph.meta_data import wrong_graph_structure
 from json import load
-from celeba.data.meta_data import attrs
-from celeba.baselines.wrong_graph.meta_data import wrong_graph_structure
 
 class WrongGraphCelebaSCM(SCM):
     def __init__(self):
@@ -16,3 +16,4 @@ class WrongGraphCelebaSCM(SCM):
                                         beta=config_vae["beta"], lr=config_vae["lr"], cond_dim=len(attrs))
         super(WrongGraphCelebaSCM, self).__init__(ckpt_path="./celeba/baselines/wrong_graph/trained_models/checkpoints/", 
                                                   graph_structure=wrong_graph_structure, **models)
+        

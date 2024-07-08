@@ -1,10 +1,10 @@
 """Create continuous attributes from the CelebA dataset using classifier logits."""
 
-import os
-from celeba.data.meta_data import attrs
-from celeba.scm.modules.classifier import Classifier
-from celeba.data.datasets import load_data
+from deepbc.celeba.data.meta_data import attrs
+from deepbc.celeba.scm.modules.classifier import Classifier
+from deepbc.celeba.data.datasets import load_data
 from torch.utils.data import DataLoader
+import os
 import torch
 
 

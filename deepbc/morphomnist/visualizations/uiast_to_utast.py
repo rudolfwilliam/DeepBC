@@ -1,15 +1,15 @@
 """Visualize the u_ast (thickness and intensity) for varying values of *antescedant i_ast* for a given example (deep backtracking only)."""
 
+from deepbc.morphomnist.data.datasets import MorphoMNISTLike
+from deepbc.morphomnist.scm import MmnistSCM
+from deepbc.morphomnist.data.meta_data import attrs
+from deepbc.optim import backtrack_linearize, backtrack_gradient
 import matplotlib.pyplot as plt
 import torch
 #import tikzplotlib
 import torch
 import numpy as np
 import seaborn as sns
-from morphomnist.data.datasets import MorphoMNISTLike
-from optim import backtrack_linearize, backtrack_gradient
-from morphomnist.scm import MmnistSCM
-from morphomnist.data.meta_data import attrs
 
 plt.style.use('ggplot')
 

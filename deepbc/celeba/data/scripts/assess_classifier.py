@@ -1,9 +1,8 @@
 """Visually assess the performance of the classifiers on a few images."""
 
-from pytorch_lightning import Trainer
-from celeba.scm.modules.classifier import Classifier
-from celeba.data.datasets import load_data
-from celeba.data.meta_data import attr2int
+from deepbc.celeba.scm.modules.classifier import Classifier
+from deepbc.celeba.data.datasets import load_data
+from deepbc.celeba.data.meta_data import attr2int
 import torch
 import matplotlib.pyplot as plt
 import os

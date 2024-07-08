@@ -1,10 +1,9 @@
-from scm.modules import GCondFlow
-from custom_components import CondFlow, SigmoidFlow, LogOddsFlow, ConstAddScaleFlow
-import normflows as nf
-from utils import override
+from deepbc.scm.modules import GCondFlow
+from deepbc.custom_components import CondFlow, SigmoidFlow, LogOddsFlow, ConstAddScaleFlow
+from deepbc.utils import override
 from normflows.flows import AutoregressiveRationalQuadraticSpline, MaskedAffineAutoregressive
 from normflows.flows import affine
-
+import normflows as nf
 
 class ThicknessFlow(GCondFlow):
     def __init__(self, name="thickness", n_layers=3, lr=1e-6, verbose=False):

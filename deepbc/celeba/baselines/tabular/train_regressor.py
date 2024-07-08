@@ -4,10 +4,10 @@ import torch
 import os
 import torch.nn as nn
 import pytorch_lightning as pl
-from data.datasets import SelectAttributesTransform
-from celeba.data.meta_data import attrs
-from celeba.data.datasets import CelebaContinuous
-from utils import generate_checkpoint_callback, generate_early_stopping_callback
+from deepbc.data.datasets import SelectAttributesTransform
+from deepbc.celeba.data.meta_data import attrs
+from deepbc.celeba.data.datasets import CelebaContinuous
+from deepbc.utils import generate_checkpoint_callback, generate_early_stopping_callback
 
 class Regressor(pl.LightningModule):
     """Simple model that regresses one attribute from all others."""

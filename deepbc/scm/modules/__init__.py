@@ -1,3 +1,3 @@
-from scm.modules.structural_equation import StructuralEquation
-from scm.modules.vae import CondVAE
-from scm.modules.flow import GCondFlow
+from deepbc.scm.modules.structural_equation import StructuralEquation
+from deepbc.scm.modules.vae import CondVAE
+from deepbc.scm.modules.flow import GCondFlow

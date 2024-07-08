@@ -1,14 +1,14 @@
 """Visualize the *antescedant i_ast* to t_ast, for multiple samples."""
 
+from deepbc.morphomnist.data.datasets import MorphoMNISTLike
+from deepbc.morphomnist.scm.model import MmnistSCM
+from deepbc.morphomnist.data.meta_data import attrs
+from deepbc.sampling import langevin_mc
+from deepbc.optim import backtrack_linearize
 import matplotlib.pyplot as plt
 import torch
 import numpy as np
 import seaborn as sns
-from optim import backtrack_linearize
-from morphomnist.data.datasets import MorphoMNISTLike
-from sampling import langevin_mc
-from morphomnist.scm.model import MmnistSCM
-from morphomnist.data.meta_data import attrs
 
 plt.style.use('ggplot')
 

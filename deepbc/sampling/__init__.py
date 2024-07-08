@@ -1,1 +1,1 @@
-from sampling.sample import langevin_mc
+from deepbc.sampling.sample import langevin_mc

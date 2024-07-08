@@ -1,5 +1,5 @@
-from scm.modules import CondVAE
-from utils import flatten_list
+from deepbc.scm.modules import CondVAE
+from deepbc.utils import flatten_list
 from torch.functional import F
 from torch import nn
 import torch
@@ -76,3 +76,4 @@ class MmnistCondVAE(CondVAE):
         decoder = Decoder(cond_dim, latent_dim, n_chan=n_chan[::-1])
 
         super(MmnistCondVAE, self).__init__(encoder, decoder, latent_dim, name=name)
+        

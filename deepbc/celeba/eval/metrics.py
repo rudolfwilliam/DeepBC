@@ -1,4 +1,4 @@
-from celeba.data.meta_data import attrs
+from deepbc.celeba.data.meta_data import attrs
 import torch
 
 def obs(x, x_ast, mode="l2"):

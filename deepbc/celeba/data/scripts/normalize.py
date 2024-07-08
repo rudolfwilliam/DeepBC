@@ -1,11 +1,6 @@
 """Create continuous attributes from the CelebA dataset."""
 
-import os
-from celeba.data.meta_data import attrs
-from celeba.scm.modules.classifier import Classifier
-from celeba.data.datasets import load_data
-from torch.utils.data import DataLoader
-from torch.nn.functional import normalize
+from deepbc.celeba.data.meta_data import attrs
 import torch
 
 

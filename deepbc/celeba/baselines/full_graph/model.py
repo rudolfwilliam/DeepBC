@@ -1,9 +1,9 @@
-from celeba.scm.modules import CelebaCondVAE
-from celeba.scm.modules import AttributeFlow
-from scm.model import SCM
+from deepbc.celeba.scm.modules import CelebaCondVAE
+from deepbc.celeba.scm.modules import AttributeFlow
+from deepbc.scm.model import SCM
+from deepbc.celeba.data.meta_data import attrs
+from deepbc.celeba.baselines.full_graph.meta_data import full_graph_structure
 from json import load
-from celeba.data.meta_data import attrs
-from celeba.baselines.full_graph.meta_data import full_graph_structure
 
 class FullGraphCelebaSCM(SCM):
     def __init__(self):
@@ -16,3 +16,4 @@ class FullGraphCelebaSCM(SCM):
                                         beta=config_vae["beta"], lr=config_vae["lr"], cond_dim=len(attrs))
         super(FullGraphCelebaSCM, self).__init__(ckpt_path="./celeba/baselines/full_graph/trained_models/checkpoints/", 
                                                   graph_structure=full_graph_structure, **models)
+                                                  

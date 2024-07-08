@@ -1,13 +1,13 @@
 """Plot images with different antecedent thicknesses for deep backtracking and interventional counterfactuals."""
 
+from deepbc.morphomnist.data.datasets import MorphoMNISTLike, normalize
+from deepbc.morphomnist.scm.model import SCM
+from deepbc.optim import backtrack_linearize
 import matplotlib.pyplot as plt
 import torch
-import tikzplotlib
+#import tikzplotlib
 import numpy as np
 import seaborn as sns
-from morphomnist.data.datasets import MorphoMNISTLike, normalize
-from optim import backtrack_linearize
-from morphomnist.scm.model import SCM
 
 rg = np.arange(-1.5, 3.5, 1)
 

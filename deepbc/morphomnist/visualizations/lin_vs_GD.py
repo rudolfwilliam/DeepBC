@@ -1,10 +1,10 @@
+from deepbc.morphomnist.data.datasets import MorphoMNISTLike
+from deepbc.morphomnist.scm.model import MmnistSCM
+from deepbc.morphomnist.data.meta_data import attrs
+from deepbc.optim import backtrack_linearize, backtrack_gradient
 import matplotlib.pyplot as plt
 import torch
 import numpy as np
-from morphomnist.data.datasets import MorphoMNISTLike
-from optim import backtrack_linearize, backtrack_gradient
-from morphomnist.scm.model import MmnistSCM
-from morphomnist.data.meta_data import attrs
 
 rg = torch.tensor(np.arange(-1.9, 2, 0.1), dtype=torch.float32).view(-1, 1)
 lrs = [1, 1e-1, 1e-3]

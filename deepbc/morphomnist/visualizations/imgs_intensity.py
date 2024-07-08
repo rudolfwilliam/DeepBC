@@ -1,13 +1,13 @@
 """Plot images with different antecedent intensities for deep backtracking and interventional counterfactuals."""
 
+from deepbc.morphomnist.data.meta_data import attrs
+from deepbc.morphomnist.data.datasets import MorphoMNISTLike
+from deepbc.morphomnist.scm.model import MmnistSCM
+from deepbc.optim import backtrack_linearize
 import matplotlib.pyplot as plt
 import torch
 #import tikzplotlib
 import numpy as np
-from morphomnist.data.meta_data import attrs
-from morphomnist.data.datasets import MorphoMNISTLike
-from optim import backtrack_linearize
-from morphomnist.scm.model import MmnistSCM
 
 rg = np.array([-2, -1.5, 0, 1.5, 2])
 

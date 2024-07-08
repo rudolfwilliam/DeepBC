@@ -1,6 +1,6 @@
 """Generic conditional VAE class without specified encoder and decoder archtitecture: to be implemented by subclasses."""
 
-from scm.modules import StructuralEquation
+from deepbc.scm.modules import StructuralEquation
 from torch import nn
 from torch.optim import Adam
 import pytorch_lightning as pl

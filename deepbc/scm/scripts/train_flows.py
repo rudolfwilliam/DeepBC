@@ -1,6 +1,6 @@
-from utils import generate_checkpoint_callback, generate_early_stopping_callback
+from deepbc.utils import generate_checkpoint_callback, generate_early_stopping_callback
+from deepbc.data.datasets import SelectAttributesTransform
 from pytorch_lightning import Trainer
-from data.datasets import SelectAttributesTransform
 import torch
 
 def train_flow(flow, config, data_class, graph_structure, attrs, default_root_dir, **kwargs):

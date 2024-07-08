@@ -1,8 +1,8 @@
 """This class integrates all individual generative models into a single SCM model."""
 
-from morphomnist.scm.modules import MmnistCondVAE, ThicknessFlow, IntensFlow
-from morphomnist.data.meta_data import graph_structure, attrs
-from scm.model import SCM
+from deepbc.morphomnist.scm.modules import MmnistCondVAE, ThicknessFlow, IntensFlow
+from deepbc.morphomnist.data.meta_data import graph_structure, attrs
+from deepbc.scm.model import SCM
 from json import load
 
 class MmnistSCM(SCM):

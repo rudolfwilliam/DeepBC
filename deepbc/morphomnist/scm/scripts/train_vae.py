@@ -1,11 +1,9 @@
-from morphomnist.scm.modules import MmnistCondVAE
-from morphomnist.data.datasets import MorphoMNISTLike
-from json import load
-from scm import train_vae
-from utils import get_config
-from morphomnist.data.meta_data import attrs
+from deepbc.morphomnist.scm.modules import MmnistCondVAE
+from deepbc.morphomnist.data.datasets import MorphoMNISTLike
+from deepbc.scm import train_vae
+from deepbc.utils import get_config
+from deepbc.morphomnist.data.meta_data import attrs
 import torch
-import argparse
 
 
 def main(data_dir="./morphomnist/data", default_root_dir="./morphomnist/scm"):
@@ -25,3 +23,4 @@ def main(data_dir="./morphomnist/data", default_root_dir="./morphomnist/scm"):
 
 if __name__ == "__main__":
     main()
+    

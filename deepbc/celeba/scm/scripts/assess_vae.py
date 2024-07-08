@@ -1,5 +1,5 @@
-from celeba.scm import CelebaSCM
-from celeba.data.meta_data import attrs
+from deepbc.celeba.scm import CelebaSCM
+from deepbc.celeba.data.meta_data import attrs
 import matplotlib.pyplot as plt
 import torch
 

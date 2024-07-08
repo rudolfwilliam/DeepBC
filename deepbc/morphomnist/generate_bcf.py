@@ -1,8 +1,7 @@
+from deepbc.morphomnist import MmnistSCM
+from deepbc.optim import backtrack_linearize
 import torch
 import matplotlib.pyplot as plt
-from optim import backtrack_linearize
-from morphomnist import MmnistSCM
-
 
 def generate_bcf(img, i, t, val_ast, var='intensity'):
     """Generate backtracking counterfactual values for the given factual variables and counterfactual variable."""
@@ -32,3 +31,4 @@ def generate_bcf_plot(img, i, t, val_ast, var='intensity'):
     plt.imshow(img_ast, cmap='gray', vmin=vmin, vmax=vmax)
     plt.title("intensity: " + str(round(i_ast.item(), 2)) + ", thickness: " + str(round(t_ast.item(), 2)))
     plt.show()
+    

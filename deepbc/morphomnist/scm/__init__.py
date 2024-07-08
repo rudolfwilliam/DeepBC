@@ -1,1 +1,1 @@
-from morphomnist.scm.model import MmnistSCM
+from deepbc.morphomnist.scm.model import MmnistSCM

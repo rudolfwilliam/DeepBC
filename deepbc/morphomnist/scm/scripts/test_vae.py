@@ -1,6 +1,6 @@
-from morphomnist.scm.modules.vae import CondVAE
-from morphomnist.data.datasets import MorphoMNISTLike, normalize
-from morphomnist.scm.modules.flow import FlowThickness, FlowIntens
+from deepbc.morphomnist.scm.modules.vae import CondVAE
+from deepbc.morphomnist.data.datasets import MorphoMNISTLike, normalize
+from deepbc.morphomnist.scm.modules.flow import FlowThickness, FlowIntens
 import matplotlib.pyplot as plt
 import torch
 

@@ -19,8 +19,6 @@ conda env create -n deepbc -f environment.yaml
 
 Our code runs on [PyTorch](https://pytorch.org/), [PyTorch Lightning](https://lightning.ai/docs/pytorch/latest/) and [normflows](https://github.com/VincentStimper/normalizing-flows).
 
-Before executing any script, make sure to set your working directory to `deepbc` within the `deepbc` repository or just simply navigate there from the root folder by `cd deepbc`. All scripts assume that this is your working directory.
-
 ## Code Organization
 
 We utilize a separate directory for each of the data sets `morphomnist` and `celeba`. However, for improved modularity, common functionalities and components are provided at the top level (`optim`, `data` and `scm` folders). The coarse directory structure is given as follows:
@@ -59,7 +57,7 @@ Configurations for the individual architectures and algorithms can be found in `
 You can reproduce all figures from the paper by running the corresponding modules as described in `FIGURE_GUIDE.md`. For instance, if we would like to reproduce Fig. 3, we need to run
 
 ```
-python -m morphomnist.visualizations.tast_to_iast
+python -m deepbc.morphomnist.visualizations.tast_to_iast
 ```
 
 ## Tables
@@ -67,20 +65,20 @@ python -m morphomnist.visualizations.tast_to_iast
 You can reproduce the table from the paper by running the corresponding modules as described in `TABLE_GUIDE.md`. To evaluate the different metods (to obtain the scores), run
 
 ```
-python -m celeba.eval.evaluate_metrics
+python -m deepbc.celeba.eval.evaluate_metrics
 ```
 
 ## Structural Causal Model (SCM) Training
 
-If you would like to retrain the models that are inside of the structural causal models, run the modules `$.scm.scripts.train_flows` and `$.scm.scripts.train_vae`, where `$` must be replaced by either `morphomnist` or `celeba`. E.g., for `morphomnist`, run
+If you would like to retrain the models that are inside of the structural causal models, run the modules `deepbc.$.scm.scripts.train_flows` and `deepbc.$.scm.scripts.train_vae`, where `$` must be replaced by either `morphomnist` or `celeba`. E.g., for `morphomnist`, run
 
 ```
-python -m morphomnist.scm.scripts.train_flows
+python -m deepbc.morphomnist.scm.scripts.train_flows
 
-python -m morphomnist.scm.scripts.train_vae
+python -m deepbc.morphomnist.scm.scripts.train_vae
 ```
 
-VAEs may be trained either on CPU or (potentially multiple) GPUs. Training the flows on GPU may result in an error. If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./$/scm/trained_models/checkpoints`. All scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
+VAEs may be trained either on CPU or (potentially multiple) GPUs. Training the flows on GPU may result in an error. If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./deepbc/$/scm/trained_models/checkpoints`. All scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
 
 ## How to Cite
 

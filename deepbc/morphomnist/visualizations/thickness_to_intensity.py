@@ -1,10 +1,10 @@
 """Assess conditional flow for intensity given thickness for varying thickness values."""
 
+from deepbc.morphomnist.scm.model import SCM
+from deepbc.morphomnist.data.datasets import MorphoMNISTLike, normalize
 import torch
 import numpy as np
 import matplotlib.pyplot as plt
-from morphomnist.scm.model import SCM
-from morphomnist.data.datasets import MorphoMNISTLike, normalize
 
 def main(data_dir):
     scm = SCM()

@@ -1,8 +1,8 @@
-from celeba.data.datasets import CelebaContinuous
-from celeba.scm.modules import CelebaCondVAE
-from celeba.data.meta_data import attrs
-from scm import train_vae
-from utils import get_config
+from deepbc.celeba.data.datasets import CelebaContinuous
+from deepbc.celeba.scm.modules import CelebaCondVAE
+from deepbc.celeba.data.meta_data import attrs
+from deepbc.scm import train_vae
+from deepbc.utils import get_config
 import torch
 
 def main(cont_attr_path="./celeba/data/predictions/preds.pt", config_dir="./celeba/scm/config/", default_root_dir="./celeba/scm"):

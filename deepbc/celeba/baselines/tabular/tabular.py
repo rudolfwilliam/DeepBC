@@ -1,9 +1,9 @@
-from scm.model import SCM
-from scm.modules import StructuralEquation
-from optim import backtrack_gradient, backtrack_linearize
-from utils import override
-from celeba.baselines.tabular.train_regressor import Regressor
-from celeba.data.meta_data import attrs
+from deepbc.scm.model import SCM
+from deepbc.scm.modules import StructuralEquation
+from deepbc.optim import backtrack_gradient, backtrack_linearize
+from deepbc.utils import override
+from deepbc.celeba.baselines.tabular.train_regressor import Regressor
+from deepbc.celeba.data.meta_data import attrs
 import os
 import torch
 

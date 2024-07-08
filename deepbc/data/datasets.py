@@ -7,3 +7,4 @@ class SelectAttributesTransform:
 
     def __call__(self, img, attrs):
         return attrs[[self.attr_idx]], torch.Tensor([attrs[idx] for idx in self.pa_idx])
+        

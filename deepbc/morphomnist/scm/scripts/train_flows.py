@@ -1,8 +1,8 @@
-from morphomnist.scm.modules import IntensFlow, ThicknessFlow
-from morphomnist.data.datasets import MorphoMNISTLike
-from morphomnist.data.meta_data import attrs, graph_structure
-from scm import train_flow
-from utils import get_config
+from deepbc.morphomnist.scm.modules import IntensFlow, ThicknessFlow
+from deepbc.morphomnist.data.datasets import MorphoMNISTLike
+from deepbc.morphomnist.data.meta_data import attrs, graph_structure
+from deepbc.scm import train_flow
+from deepbc.utils import get_config
 import torch
 
 def main():

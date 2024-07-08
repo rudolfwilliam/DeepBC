@@ -1,8 +1,8 @@
-from celeba.data.datasets import CelebaContinuous
-from celeba.data.meta_data import attrs
-from celeba.baselines.wrong_graph.meta_data import wrong_graph_structure
-from celeba.scm.modules.flow import AttributeFlow
-from scm.scripts.train_flows import train_flow
+from deepbc.celeba.data.datasets import CelebaContinuous
+from deepbc.celeba.data.meta_data import attrs
+from deepbc.celeba.baselines.wrong_graph.meta_data import wrong_graph_structure
+from deepbc.celeba.scm.modules.flow import AttributeFlow
+from deepbc.scm.scripts.train_flows import train_flow
 from json import load
 import torch
 import argparse

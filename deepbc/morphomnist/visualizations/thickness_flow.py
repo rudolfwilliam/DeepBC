@@ -1,10 +1,9 @@
 """Compare original thickness distribution to the thickness distribution obtained by sampling from the thickness flow."""
 
+from deepbc.morphomnist.scm.model import SCM
+from deepbc.morphomnist.data.datasets import MorphoMNISTLike, normalize
 import torch
-import numpy as np
 import matplotlib.pyplot as plt
-from morphomnist.scm.model import SCM
-from morphomnist.data.datasets import MorphoMNISTLike, normalize
 
 def main(data_dir):
     scm = SCM()

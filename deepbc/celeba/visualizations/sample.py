@@ -1,8 +1,8 @@
 """Stochastic DeepBC."""
 
 import torch
-from celeba.scm.model import CelebaSCM
-from sampling.sample import langevin_mc
+from deepbc.celeba.scm.model import CelebaSCM
+from deepbc.sampling.sample import langevin_mc
 import matplotlib.pyplot as plt
 
 def main():

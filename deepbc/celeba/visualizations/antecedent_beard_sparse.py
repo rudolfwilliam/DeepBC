@@ -1,6 +1,6 @@
-from celeba.scm.model import CelebaSCM
-from optim import backtrack_linearize
-from celeba.baselines import tab_CE, WrongGraphCelebaSCM
+from deepbc.celeba.scm.model import CelebaSCM
+from deepbc.celeba.baselines import tab_CE, WrongGraphCelebaSCM
+from deepbc.optim import backtrack_linearize
 import matplotlib.pyplot as plt
 import torch
 

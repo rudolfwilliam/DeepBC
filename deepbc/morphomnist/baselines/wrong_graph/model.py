@@ -1,6 +1,6 @@
-from morphomnist.scm.modules import MmnistCondVAE, WGIntensFlow, WGThicknessFlow
-from morphomnist.baselines.wrong_graph.meta_data import wrong_graph_structure, attrs
-from scm.model import SCM
+from deepbc.morphomnist.scm.modules import MmnistCondVAE, WGIntensFlow, WGThicknessFlow
+from deepbc.morphomnist.baselines.wrong_graph.meta_data import wrong_graph_structure, attrs
+from deepbc.scm.model import SCM
 from json import load
 
 class WGMmnistSCM(SCM):
