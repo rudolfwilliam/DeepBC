@@ -1,6 +1,6 @@
 """Generic conditional flow class without specified archtitecture: to be implemented by subclasses."""
 
-from deepbc.scm.modules import StructuralEquation
+from modules import StructuralEquation
 from torch.optim import Adam
 import pytorch_lightning as pl
 

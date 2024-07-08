@@ -1,7 +1,7 @@
 from deepbc.morphomnist.scm.modules import MmnistCondVAE
 from deepbc.morphomnist.data.datasets import MorphoMNISTLike
-from deepbc.scm import train_vae
-from deepbc.utils import get_config
+from deepbc.src.deepbc.scm import train_vae
+from deepbc.src.deepbc.utils import get_config
 from deepbc.morphomnist.data.meta_data import attrs
 import torch
 

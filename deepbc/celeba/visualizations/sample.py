@@ -2,7 +2,7 @@
 
 import torch
 from deepbc.celeba.scm.model import CelebaSCM
-from deepbc.src.sampling.sample import langevin_mc
+from deepbc.src.deepbc.sampling.sample import langevin_mc
 import matplotlib.pyplot as plt
 
 def main():

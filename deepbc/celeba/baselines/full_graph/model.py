@@ -2,7 +2,7 @@ from deepbc.celeba.scm.modules import CelebaCondVAE
 from deepbc.celeba.scm.modules import AttributeFlow
 from deepbc.celeba.data.meta_data import attrs
 from deepbc.celeba.baselines.full_graph.meta_data import full_graph_structure
-from deepbc.src.scm.model import SCM
+from deepbc.src.deepbc.scm.model import SCM
 from json import load
 
 class FullGraphCelebaSCM(SCM):

@@ -3,7 +3,7 @@
 from deepbc.morphomnist.data.meta_data import attrs
 from deepbc.morphomnist.data.datasets import MorphoMNISTLike
 from deepbc.morphomnist.scm.model import MmnistSCM
-from deepbc.src.optim import backtrack_linearize
+from deepbc.src.deepbc.optim import backtrack_linearize
 import matplotlib.pyplot as plt
 import torch
 #import tikzplotlib

@@ -1,6 +1,6 @@
-from deepbc.scm.modules import GCondFlow
-from deepbc.custom_components import CondFlow, SigmoidFlow, LogOddsFlow, ConstAddScaleFlow
-from deepbc.utils import override
+from deepbc.src.deepbc.scm.modules import GCondFlow
+from deepbc.src.deepbc.custom_components import CondFlow, SigmoidFlow, LogOddsFlow, ConstAddScaleFlow
+from deepbc.src.deepbc.utils import override
 from normflows.flows import AutoregressiveRationalQuadraticSpline, MaskedAffineAutoregressive
 from normflows.flows import affine
 import normflows as nf

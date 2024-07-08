@@ -1,6 +1,6 @@
 """Algorithms for solving the mode deep backtracking optimization problem."""
 
-from deepbc.utils import convert_vals_ast
+from ..utils import convert_vals_ast
 import torch
 from torch.linalg import pinv
 

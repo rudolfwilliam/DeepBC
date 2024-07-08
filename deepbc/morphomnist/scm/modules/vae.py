@@ -1,5 +1,5 @@
-from deepbc.scm.modules import CondVAE
-from deepbc.utils import flatten_list
+from deepbc.src.deepbc.scm.modules import CondVAE
+from deepbc.src.deepbc.utils import flatten_list
 from torch.functional import F
 from torch import nn
 import torch

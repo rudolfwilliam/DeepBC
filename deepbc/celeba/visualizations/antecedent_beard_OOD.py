@@ -1,7 +1,7 @@
 from deepbc.celeba.scm.model import CelebaSCM
 from deepbc.celeba.data.meta_data import graph_structure
 from deepbc.celeba.scm.modules import AttributeFlow
-from deepbc.src.optim import backtrack_linearize
+from deepbc.src.deepbc.optim import backtrack_linearize
 import matplotlib.pyplot as plt
 import torch
 from json import load

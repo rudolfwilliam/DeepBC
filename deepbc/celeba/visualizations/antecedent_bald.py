@@ -1,5 +1,5 @@
 from deepbc.celeba.scm.model import CelebaSCM
-from deepbc.src.optim import backtrack_linearize
+from deepbc.src.deepbc.optim import backtrack_linearize
 import matplotlib.pyplot as plt
 import torch
 

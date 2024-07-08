@@ -1,4 +1,4 @@
-from deepbc.utils import generate_checkpoint_callback, generate_early_stopping_callback
+from ...utils import generate_checkpoint_callback, generate_early_stopping_callback
 import torch
 from pytorch_lightning import Trainer
 

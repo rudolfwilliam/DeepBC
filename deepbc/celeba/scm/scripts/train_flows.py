@@ -1,8 +1,8 @@
 from deepbc.celeba.data.datasets import CelebaContinuous
 from deepbc.celeba.data.meta_data import attrs, graph_structure
 from deepbc.celeba.scm.modules.flow import AttributeFlow
-from deepbc.src.scm.scripts.train_flows import train_flow
-from deepbc.utils import get_config
+from deepbc.src.deepbc.scm.scripts.train_flows import train_flow
+from deepbc.src.deepbc.utils import get_config
 import torch
 
 

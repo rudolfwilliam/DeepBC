@@ -1,7 +1,7 @@
 """Conditional flows for modeling the continuous attributes of CelebA."""
 
-from deepbc.src.scm.modules import GCondFlow
-from deepbc.src.custom_components import CondFlow
+from deepbc.src.deepbc.scm.modules import GCondFlow
+from deepbc.src.deepbc.custom_components import CondFlow
 from normflows.flows import AutoregressiveRationalQuadraticSpline, MaskedAffineAutoregressive
 import normflows as nf
 from normflows.flows.affine.coupling import AffineConstFlow

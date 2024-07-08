@@ -1,5 +1,5 @@
-from deepbc.utils import generate_checkpoint_callback, generate_early_stopping_callback
-from deepbc.data.datasets import SelectAttributesTransform
+from ...utils import generate_checkpoint_callback, generate_early_stopping_callback
+from ...data.datasets import SelectAttributesTransform
 from pytorch_lightning import Trainer
 import torch
 

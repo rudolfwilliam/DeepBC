@@ -1,6 +1,6 @@
-from deepbc.utils import generate_checkpoint_callback, generate_early_stopping_callback
 from deepbc.celeba.data.datasets import CelebaContinuous
 from deepbc.celeba.baselines.non_causal_CE.vae import CelebaVAE
+from deepbc.src.deepbc.utils import generate_checkpoint_callback, generate_early_stopping_callback
 from pytorch_lightning import Trainer
 from json import load
 import torch
