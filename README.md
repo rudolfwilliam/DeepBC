@@ -2,7 +2,7 @@
 
 [![Python 3.11.3](https://img.shields.io/badge/python-3.11.3-blue.svg)](https://www.python.org/downloads/release/python-3113/)
 
-Repository for the paper [*Deep Backtracking Counterfactuals for Causally Compliant Explanations*](https://arxiv.org/pdf/2310.07665).
+Repository for the TMLR paper [*Deep Backtracking Counterfactuals for Causally Compliant Explanations*](https://arxiv.org/pdf/2310.07665) by Klaus-Rudolf Kladny, Julius von Kügelgen, Bernhard Schölkopf and Michael Muehlebach.
 
 <p align="center">
 <img src="/assets/DeepBC_plot_github.svg" width="500">
