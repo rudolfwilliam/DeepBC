@@ -2,7 +2,7 @@
 
 [![Python 3.11.3](https://img.shields.io/badge/python-3.11.3-blue.svg)](https://www.python.org/downloads/release/python-3113/)
 
-Repository for the TMLR paper [*Deep Backtracking Counterfactuals for Causally Compliant Explanations*](https://arxiv.org/pdf/2310.07665) by Klaus-Rudolf Kladny, Julius von Kügelgen, Bernhard Schölkopf and Michael Muehlebach.
+Repository for the TMLR paper [*Deep Backtracking Counterfactuals for Causally Compliant Explanations*](https://openreview.net/pdf?id=Br5esc2CXR) by Klaus-Rudolf Kladny, Julius von Kügelgen, Bernhard Schölkopf and Michael Muehlebach.
 
 <p align="center">
 <img src="/assets/DeepBC_plot_github.svg" width="500">
@@ -10,12 +10,27 @@ Repository for the TMLR paper [*Deep Backtracking Counterfactuals for Causally C
 
 ***
 
-## General
+## Citation
+
+If you find our code useful, we would be happy if you could leave our repository a star :star: and cite our publication :page_facing_up:. The bibtex entry is
+
+```bibtex
+@article{kladny2024deep,
+    title={Deep Backtracking Counterfactuals for Causally Compliant Explanations},
+    author={Klaus-Rudolf Kladny and Julius von K{\"u}gelgen and Bernhard Sch{\"o}lkopf and Michael Muehlebach},
+    journal={Transactions on Machine Learning Research},
+    issn={2835-8856},
+    year={2024},
+    url={https://openreview.net/forum?id=Br5esc2CXR}
+}
+```
+
+## Getting Started :rocket:
 To run our code, first make sure to have [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) and [git large file storage](https://git-lfs.com/) installed.
 
 Then, copy or clone this repository. Create a conda environment (assuming that you would like to call it `deepbc`):
 
-```
+```console
 conda env create -n deepbc -f environment.yaml
 ```
 
@@ -61,7 +76,7 @@ Configurations for the individual architectures and algorithms can be found in `
 
 You can reproduce all figures from the paper by running the corresponding modules as described in `FIGURE_GUIDE.md`. For instance, if we would like to reproduce Fig. 3, we need to run
 
-```
+```console
 python -m deepbc.morphomnist.visualizations.tast_to_iast
 ```
 
@@ -69,7 +84,7 @@ python -m deepbc.morphomnist.visualizations.tast_to_iast
 
 You can reproduce the table from the paper by running the corresponding modules as described in `TABLE_GUIDE.md`. To evaluate the different metods (to obtain the scores), run
 
-```
+```console
 python -m deepbc.celeba.eval.evaluate_metrics
 ```
 
@@ -77,7 +92,7 @@ python -m deepbc.celeba.eval.evaluate_metrics
 
 If you would like to retrain the models that are inside of the structural causal models, run the modules `deepbc.$.scm.scripts.train_flows` and `deepbc.$.scm.scripts.train_vae`, where `$` must be replaced by either `morphomnist` or `celeba`. E.g., for `morphomnist`, run
 
-```
+```console
 python -m deepbc.morphomnist.scm.scripts.train_flows
 
 python -m deepbc.morphomnist.scm.scripts.train_vae
@@ -85,19 +100,6 @@ python -m deepbc.morphomnist.scm.scripts.train_vae
 
 VAEs may be trained either on CPU or (potentially multiple) GPUs. Training the flows on GPU may result in an error. If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./deepbc/$/scm/trained_models/checkpoints`. All scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
 
-## Citation
-
-If you find our code useful, we would be happy if you could leave our repository a star and cite our preprint. The bibtex entry is
-
-```biblatex
-@article{kladny2023deep,
-  title={Deep backtracking counterfactuals for causally compliant explanations},
-  author={Kladny, Klaus-Rudolf and von K{\"u}gelgen, Julius and Sch{\"o}lkopf, Bernhard and Muehlebach, Michael},
-  journal={arXiv preprint arXiv:2310.07665},
-  year={2023}
-}
-```
-
 ## Issues?
 
-If you experience difficulties with the code, just open an issue or write an e-mail to *kkladny [at] tuebingen [dot] mpg [dot] de*. Also, we are happy to merge your pull requests if you have an interesting extension.
+If you experience difficulties with the code, just open an issue or write an e-mail to *kkladny [at] tuebingen [dot] mpg [dot] de*. Also, we are happy to merge your pull request if you have an interesting extension/application.
