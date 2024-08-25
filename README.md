@@ -98,7 +98,10 @@ python -m deepbc.morphomnist.scm.scripts.train_flows
 python -m deepbc.morphomnist.scm.scripts.train_vae
 ```
 
-VAEs may be trained either on CPU or (potentially multiple) GPUs. Training the flows on GPU may result in an error. If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./deepbc/$/scm/trained_models/checkpoints`. All scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
+VAEs may be trained either on CPU or (potentially multiple) GPUs. Training the flows on GPU may result in an error.
+
+>[!IMPORTANT]
+>If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./deepbc/$/scm/trained_models/checkpoints`. All scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
 
 ## Issues?
 
