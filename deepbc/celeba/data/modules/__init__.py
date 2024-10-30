@@ -1,1 +1,0 @@
-from deepbc.celeba.data.modules.classifier import Classifier 

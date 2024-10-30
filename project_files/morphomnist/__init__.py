@@ -1,0 +1,1 @@
+from project_files.morphomnist.scm.model import MmnistSCM
