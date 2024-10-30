@@ -8,6 +8,7 @@ Repository for the TMLR paper [*Deep Backtracking Counterfactuals for Causally C
 <img src="/assets/DeepBC_plot_github.svg" width="500">
 </p>
 
+Our code runs on [PyTorch](https://pytorch.org/), [PyTorch Lightning](https://lightning.ai/docs/pytorch/latest/) and [normflows](https://github.com/VincentStimper/normalizing-flows).
 ***
 
 ## Citation
@@ -26,15 +27,30 @@ If you find our code useful, we would be happy if you could leave our repository
 ```
 
 ## Getting Started :rocket:
-To run our code, first make sure to have [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) and [git large file storage](https://git-lfs.com/) installed.
+First, copy or clone this repository. If you only want to access the core functionality of `deepbc` (i.e., in your own project), you can directly jump to the [package installation](#installing-the-`deepbc`-package).
+### Reproducing experiments
+If you want to reproduce the experiments of our paper, first make sure to have [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) and [git large file storage](https://git-lfs.com/) installed.
 
-Then, copy or clone this repository. Create a conda environment (assuming that you would like to call it `deepbc`):
+Create a conda environment (assuming that you would like to call it `deepbc`):
 
 ```console
 conda env create -n deepbc -f environment.yaml
 ```
 
-Our code runs on [PyTorch](https://pytorch.org/), [PyTorch Lightning](https://lightning.ai/docs/pytorch/latest/) and [normflows](https://github.com/VincentStimper/normalizing-flows).
+and activate this environment
+```console
+conda activate deepbc
+```
+### Installing the `deepbc` package
+Install the core functionality via `setup.py`:
+```console
+pip install -e .
+```
+This way, you can access the core functionality of `deepbc`. For example, you can run
+```python
+from deepbc.optim import backtrack_linearize
+```
+to access the linearization algorithm for mode DeepBC.
 
 ## Code Organization
 
@@ -44,13 +60,13 @@ We utilize a separate directory for each of the data sets `morphomnist` and `cel
 .
 ├── FIGURE_GUIDE.md                           # Guide for reproducing figures
 ├── setup.py                                  # Can be used to install core functionality
-├── deepbc
-|      ├── src
-│      │    └─ deepbc                         # Can be installed as package via setup.py
-│      │         ├── optim                    # Mode DeepBC optimization algorithms
-│      │         ├── sampling                 # Stochastic DeepBC via Langevin MC sampling
-│      │         ├── data                     # General data functionality
-│      │         └── scm                      # General structural causal model classes
+├── src
+│    └─ deepbc                                # Can be installed as package via setup.py
+│         ├── optim                           # Mode DeepBC optimization algorithms
+│         ├── sampling                        # Stochastic DeepBC via Langevin MC sampling
+│         ├── data                            # General data functionality
+│         └── scm                             # General structural causal model classes
+├── project_files
 │      ├── celeba
 │      │      ├── data
 │      │      ├── scm                         # Model classes and training scripts (vae, flow)
@@ -62,7 +78,7 @@ We utilize a separate directory for each of the data sets `morphomnist` and `cel
 │      │      │    └── ...
 │      │      ├── baselines                   # Baseline models
 │      │      ├── visualizations              # Scripts that reproduce figures from the paper
-|      |      └── eval                        # Scripts that evaluate different methods
+│      │      └── eval                        # Scripts that evaluate different methods
 │      ├── morphomnist
 │      └── ...
 └── ...    
@@ -70,14 +86,14 @@ We utilize a separate directory for each of the data sets `morphomnist` and `cel
 
 The directory structure of `morphomnist` is analogous to that of `celeba`.
 
-Configurations for the individual architectures and algorithms can be found in `config` directories within the respective subdirectories. For instance, the configuration for the celeba VAE architecture can be found in `./celeba/scm/config/vae.json`.
+Configurations for the individual architectures and algorithms can be found in `config` directories within the respective subdirectories. For instance, the configuration for the celeba VAE architecture can be found in `./project_files/celeba/scm/config/vae.json`.
 
 ## Figures
 
 You can reproduce all figures from the paper by running the corresponding modules as described in `FIGURE_GUIDE.md`. For instance, if we would like to reproduce Fig. 3, we need to run
 
 ```console
-python -m deepbc.morphomnist.visualizations.tast_to_iast
+python -m project_files.morphomnist.visualizations.tast_to_iast
 ```
 
 ## Tables
@@ -85,23 +101,23 @@ python -m deepbc.morphomnist.visualizations.tast_to_iast
 You can reproduce the table from the paper by running the corresponding modules as described in `TABLE_GUIDE.md`. To evaluate the different metods (to obtain the scores), run
 
 ```console
-python -m deepbc.celeba.eval.evaluate_metrics
+python -m project_files.celeba.eval.evaluate_metrics
 ```
 
 ## Structural Causal Model (SCM) Training
 
-If you would like to retrain the models that are inside of the structural causal models, run the modules `deepbc.$.scm.scripts.train_flows` and `deepbc.$.scm.scripts.train_vae`, where `$` must be replaced by either `morphomnist` or `celeba`. E.g., for `morphomnist`, run
+If you would like to retrain the models that are inside of the structural causal models, run the modules `project_files.$.scm.scripts.train_flows` and `project_files.$.scm.scripts.train_vae`, where `$` must be replaced by either `morphomnist` or `celeba`. E.g., for `morphomnist`, run
 
 ```console
-python -m deepbc.morphomnist.scm.scripts.train_flows
+python -m project_files.morphomnist.scm.scripts.train_flows
 
-python -m deepbc.morphomnist.scm.scripts.train_vae
+python -m project_files.morphomnist.scm.scripts.train_vae
 ```
 
 VAEs may be trained either on CPU or (potentially multiple) GPUs. Training the flows on GPU may result in an error.
 
 >[!IMPORTANT]
->If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./deepbc/$/scm/trained_models/checkpoints`. All scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
+>If you would like to work with the newly trained models rather than the old ones, it is important to first delete the old ones that are stored in `./project_files/$/scm/trained_models/checkpoints`. All scripts are set up such that they simply take the parameters of any file whose name starts with the according model name.
 
 ## Issues?
 
