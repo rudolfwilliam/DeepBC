@@ -42,11 +42,11 @@ and activate this environment
 conda activate deepbc
 ```
 ### Installing the `deepbc` package
-Install the core functionality via `setup.py`:
+Install the `deepbc` package (via `setup.py`):
 ```console
 pip install -e .
 ```
-This way, you can access the core functionality of `deepbc`. For example, you can run
+This way, you can simply import required classes and functions from our project. For example, you can run
 ```python
 from deepbc.optim import backtrack_linearize
 ```
