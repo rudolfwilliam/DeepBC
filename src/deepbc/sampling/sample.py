@@ -1,8 +1,8 @@
 """Stochastic DeepBC."""
 
+import torch
 from ..optim import *
 from ..utils import convert_vals_ast
-import torch
 
 def langevin_mc(scm, vars_, vals_ast, lambda_init=1e3, num_it_init=30, lambda_samp=1e4, gap=500, num_samp=100, sparse=False, n_largest=2, 
                 weights=None, const_idxs=None, log=False, log_file=None, dist_fun="l2", step_size=1e-6, verbose=False, **us):

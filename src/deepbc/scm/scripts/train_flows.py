@@ -1,7 +1,8 @@
-from ...utils import generate_checkpoint_callback, generate_early_stopping_callback
-from ...data.datasets import SelectAttributesTransform
 from pytorch_lightning import Trainer
 import torch
+from ...utils import generate_checkpoint_callback, generate_early_stopping_callback
+from ...data.datasets import SelectAttributesTransform
+
 
 def train_flow(flow, config, data_class, graph_structure, attrs, default_root_dir, **kwargs):
     transform = SelectAttributesTransform(attrs.index(flow.name), [attrs.index(attr_pa) for attr_pa in graph_structure[flow.name]])

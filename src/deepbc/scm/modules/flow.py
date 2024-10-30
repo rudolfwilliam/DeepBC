@@ -1,8 +1,8 @@
 """Generic conditional flow class without specified archtitecture: to be implemented by subclasses."""
 
-from .structural_equation import StructuralEquation
 from torch.optim import Adam
 import pytorch_lightning as pl
+from .structural_equation import StructuralEquation
 
 
 class GCondFlow(pl.LightningModule, StructuralEquation):

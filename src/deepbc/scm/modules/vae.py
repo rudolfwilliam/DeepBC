@@ -1,10 +1,10 @@
 """Generic conditional VAE class without specified encoder and decoder archtitecture: to be implemented by subclasses."""
 
-from .structural_equation import StructuralEquation
 from torch import nn
 from torch.optim import Adam
 import pytorch_lightning as pl
 import torch
+from .structural_equation import StructuralEquation
 
 
 class CondVAE(StructuralEquation, pl.LightningModule):
